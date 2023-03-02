@@ -75,6 +75,12 @@ px4_add_romfs_files(
 	4003_gz_rc_cessna
 	4004_gz_standard_vtol
 
+	4321_gz_hex_gz
+	4322_gz_hex_delta_gz
+	4323_gazebo-classic_hex
+	4324_gazebo-classic_hex_delta
+	4325_gazebo-classic_hex_stewart
+
 	6011_gazebo-classic_typhoon_h480
 	6011_gazebo-classic_typhoon_h480.post
 
