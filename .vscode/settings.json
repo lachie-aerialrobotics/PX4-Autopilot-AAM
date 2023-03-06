@@ -127,5 +127,9 @@
         "terminal.integrated.scrollback": 15000,
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
-        }
+        },
+        "python.autoComplete.extraPaths": [
+                "/home/aam01/aam_ws/devel/lib/python3/dist-packages",
+                "/opt/ros/noetic/lib/python3/dist-packages"
+        ]
 }
