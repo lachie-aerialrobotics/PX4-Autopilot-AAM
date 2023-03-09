@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2015-2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2023 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,58 +31,23 @@
  *
  ****************************************************************************/
 
-/**
-* @file standard.h
-* VTOL with fixed multirotor motor configurations (such as quad) and a pusher
-* (or puller aka tractor) motor for forward flight.
-*
-* @author Simon Wilks 		<simon@uaventure.com>
-* @author Roman Bapst 		<bapstroman@gmail.com>
-* @author Andreas Antener	<andreas@uaventure.com>
-* @author Sander Smeets 	<sander@droneslab.com>
-*
-*/
+#include "StickTiltXY.hpp"
 
-#ifndef STANDARD_H
-#define STANDARD_H
-#include "vtol_type.h"
+#include <geo/geo.h>
+#include "Sticks.hpp"
 
-class Standard : public VtolType
+using namespace matrix;
+
+StickTiltXY::StickTiltXY(ModuleParams *parent) :
+	ModuleParams(parent)
+{}
+
+Vector2f StickTiltXY::generateAccelerationSetpoints(Vector2f stick_xy, const float dt, const float yaw,
+		const float yaw_setpoint)
 {
-
-public:
-
-	Standard(VtolAttitudeControl *_att_controller);
-	~Standard() override = default;
-
-	void update_vtol_state() override;
-	void update_transition_state() override;
-	void update_fw_state() override;
-	void update_mc_state() override;
-	void fill_actuator_outputs() override;
-	void waiting_on_tecs() override;
-	void blendThrottleAfterFrontTransition(float scale) override;
-
-private:
-
-	enum class vtol_mode {
-		MC_MODE = 0,
-		TRANSITION_TO_FW,
-		TRANSITION_TO_MC,
-		FW_MODE
-	};
-
-	vtol_mode _vtol_mode{vtol_mode::MC_MODE};			/**< vtol flight mode, defined by enum vtol_mode */
-
-	float _pusher_throttle{0.0f};
-	float _airspeed_trans_blend_margin{0.0f};
-
-	void parameters_update() override;
-
-	DEFINE_PARAMETERS_CUSTOM_PARENT(VtolType,
-					(ParamFloat<px4::params::VT_PSHER_SLEW>) _param_vt_psher_slew,
-					(ParamFloat<px4::params::VT_B_TRANS_RAMP>) _param_vt_b_trans_ramp,
-					(ParamFloat<px4::params::FW_PSP_OFF>) _param_fw_psp_off
-				       )
-};
-#endif
+	Sticks::limitStickUnitLengthXY(stick_xy);
+	_man_input_filter.setParameters(dt, _param_mc_man_tilt_tau.get());
+	stick_xy = _man_input_filter.update(stick_xy);
+	Sticks::rotateIntoHeadingFrameXY(stick_xy, yaw, yaw_setpoint);
+	return stick_xy * tanf(math::radians(_param_mpc_man_tilt_max.get())) * CONSTANTS_ONE_G;
+}
