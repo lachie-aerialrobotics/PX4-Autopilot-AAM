@@ -4,6 +4,8 @@ See the [original README](https://github.com/PX4/PX4-Autopilot) for more details
 See also the fork of [PX4-SITL_gazebo-classic](https://github.com/lachie-aerialrobotics/PX4-SITL_gazebo-classic).
 
 # Installation
+Tested and working with Ubuntu 20.04 LTS and ROS Noetic.
+
 Clone the repo into your ROS workspace and add the original repo as upstream:
 ```
 cd aam_ws/src
@@ -30,9 +32,17 @@ export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/s
 export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models
 ```
-You may also wish to install CUDA Hardware Accelerated H264 encoding as described [here](https://github.com/lachie-aerialrobotics/PX4-SITL_gazebo-classic).
-
 # To test:
 ```
-make px4_sitl gazebo-classic_hex
+roslaunch px4 mavros_posix_sitl.launch vehicle:='hex'
+```
+# Manipulator simulation
+Perform the install instructions at [https://github.com/lachie-aerialrobotics/delta_2](https://github.com/lachie-aerialrobotics/delta_2).
+To test the delta manipulator:
+```
+roslaunch px4 mavros_posix_sitl.launch vehicle:='hex_delta'
+```
+and the stewart platform:
+```
+roslaunch px4 mavros_posix_sitl.launch vehicle:='hex_stewart'
 ```

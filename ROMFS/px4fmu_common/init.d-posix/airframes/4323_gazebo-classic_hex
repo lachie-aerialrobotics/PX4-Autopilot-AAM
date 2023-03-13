@@ -91,7 +91,7 @@ param set-default MC_YAW_P 3
 param set-default MPC_XY_VEL_P_ACC 1.8
 param set-default MPC_XY_VEL_I_ACC 0.4
 param set-default MPC_XY_VEL_D_ACC 0.2
-param set-default MPC_Z_VEL_P_ACC 3.0
+param set-default MPC_Z_VEL_P_ACC 8.0
 param set-default MPC_Z_VEL_I_ACC 0.25
 param set-default MPC_Z_VEL_D_ACC 0.0
 
