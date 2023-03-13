@@ -30,7 +30,9 @@ export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/s
 export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models
 ```
-To test:
+You may also wish to install CUDA Hardware Accelerated H264 encoding as described [here](https://github.com/lachie-aerialrobotics/PX4-SITL_gazebo-classic).
+
+# To test:
 ```
 make px4_sitl gazebo-classic_hex
 ```
