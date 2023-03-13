@@ -32,9 +32,22 @@ export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/s
 export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/aam_ws/src/PX4-Autopilot-AAM/Tools/simulation/gazebo-classic/sitl_gazebo-classic/models
 ```
-# To test:
+# Test
+Check the iris quad builds:
+```
+make px4_sitl gazebo-classic
+```
+then:
 ```
 roslaunch px4 mavros_posix_sitl.launch vehicle:='hex'
+```
+# Worlds
+Models of the Imperial College flight arena and the Empa DroneHub are also included. Try:
+```
+roslaunch px4 mavros_posix_sitl.launch vehicle:='hex' world:='ARLarena'
+```
+```
+roslaunch px4 mavros_posix_sitl.launch vehicle:='hex' world:='DroneHub'
 ```
 # Manipulator simulation
 Perform the install instructions at [https://github.com/lachie-aerialrobotics/delta_2](https://github.com/lachie-aerialrobotics/delta_2).
