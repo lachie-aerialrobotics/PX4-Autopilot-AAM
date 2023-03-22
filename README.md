@@ -44,13 +44,14 @@ roslaunch px4 mavros_posix_sitl.launch vehicle:='hex'
 # Worlds
 Models of the Imperial College flight arena and the Empa DroneHub are also included. Try:
 ```
-roslaunch px4 mavros_posix_sitl.launch vehicle:='hex' world:='ARLarena'
+make px4_sitl gazebo-classic_hex_ARLarena
 ```
 ```
-roslaunch px4 mavros_posix_sitl.launch vehicle:='hex' world:='DroneHub'
+make px4_sitl gazebo-classic_hex_DroneHub
 ```
 # Manipulator simulation
 Perform the install instructions at [https://github.com/lachie-aerialrobotics/delta_2](https://github.com/lachie-aerialrobotics/delta_2).
+
 To test the delta manipulator:
 ```
 roslaunch px4 mavros_posix_sitl.launch vehicle:='hex_delta'
