@@ -75,6 +75,7 @@ px4_add_romfs_files(
 	4003_gz_rc_cessna
 	4004_gz_standard_vtol
 	4005_gz_x500_vision
+	4006_gz_px4vision
 
 	4321_gz_hex_gz
 	4322_gz_hex_delta_gz
@@ -87,7 +88,8 @@ px4_add_romfs_files(
 	6011_gazebo-classic_typhoon_h480
 	6011_gazebo-classic_typhoon_h480.post
 
-	10016_gazebo-classic_iris
+	10015_gazebo-classic_iris
+	10016_none_iris
 	10017_jmavsim_iris
 	10018_gazebo-classic_iris_foggy_lidar
 	10019_gazebo-classic_omnicopter
