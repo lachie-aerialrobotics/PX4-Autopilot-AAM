@@ -104,6 +104,8 @@ if(gazebo_FOUND)
 		hex
 		hex_delta
 		hex_stewart
+		hld_custom
+		hld_drone
 	)
 
 	set(worlds

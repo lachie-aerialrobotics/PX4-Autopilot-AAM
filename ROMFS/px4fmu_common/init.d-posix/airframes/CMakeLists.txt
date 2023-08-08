@@ -81,6 +81,8 @@ px4_add_romfs_files(
 	4323_gazebo-classic_hex
 	4324_gazebo-classic_hex_delta
 	4325_gazebo-classic_hex_stewart
+	4326_gazebo-classic_hld_custom
+	4327_gazebo-classic_hld_drone
 
 	6011_gazebo-classic_typhoon_h480
 	6011_gazebo-classic_typhoon_h480.post
