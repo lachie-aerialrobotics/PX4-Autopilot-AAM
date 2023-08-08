@@ -4,7 +4,11 @@
 #------------------------------------------------------------------------------
 set HAVE_PM2 yes
 
+<<<<<<< HEAD
 if ver hwtypecmp V6X005000 V6X005001 V6X005003 V6X005004
+=======
+if ver hwtypecmp V6X50 V6X51 V6X53 V6X54
+>>>>>>> upstream/stable
 then
 	set HAVE_PM2 no
 fi
@@ -47,12 +51,17 @@ then
 	fi
 fi
 
+<<<<<<< HEAD
 
 if ver hwtypecmp V6X000004 V6X001004 V6X004004 V6X005004
+=======
+if ver hwtypecmp V6X04 V6X14 V6X44 V6X54
+>>>>>>> upstream/stable
 then
 	# Internal SPI bus ICM20649
 	icm20649 -s -R 6 start
 else
+<<<<<<< HEAD
 	# Internal SPI BMI088
 	if ver hwtypecmp V6X009010 V6X010010
 	then
@@ -68,6 +77,11 @@ else
 			bmi088 -G -R 4 -s start
 		fi
 	fi
+=======
+# Internal SPI BMI088
+	bmi088 -A -R 4 -s start
+	bmi088 -G -R 4 -s start
+>>>>>>> upstream/stable
 fi
 
 # Internal SPI bus ICM42688p
@@ -83,7 +97,11 @@ else
 	fi
 fi
 
+<<<<<<< HEAD
 if ver hwtypecmp V6X000003 V6X001003 V6X003003 V6X000004 V6X001004 V6X004003 V6X004004 V6X005003 V6X005004
+=======
+if ver hwtypecmp V6X03 V6X13 V6X33 V6X04 V6X14 V6X43 V6X44 V6X53 V6X54
+>>>>>>> upstream/stable
 then
 	# Internal SPI bus ICM-42670-P (hard-mounted)
 	icm42670p -R 10 -s start
@@ -98,6 +116,7 @@ else
 fi
 
 # Internal magnetometer on I2c
+<<<<<<< HEAD
 if ver hwtypecmp V6X002001
 then
 	rm3100 -I -b 4 start
@@ -109,12 +128,20 @@ else
 	else
 		bmm150 -I -R 6 start
 	fi
+=======
+if ver hwtypecmp V6X21
+then
+	rm3100 -I -b 4 start
+else
+	bmm150 -I start
+>>>>>>> upstream/stable
 fi
 
 # External compass on GPS1/I2C1 (the 3rd external bus): standard Holybro Pixhawk 4 or CUAV V5 GPS/compass puck (with lights, safety button, and buzzer)
 ist8310 -X -b 1 -R 10 start
 
 # Possible internal Baro
+<<<<<<< HEAD
 if param compare SENS_INT_BARO_EN 1
 then
 	if ver hwtypecmp V6X002001
@@ -123,6 +150,13 @@ then
 	else
 		bmp388 -I -a 0x77 start
 	fi
+=======
+if ver hwtypecmp V6X21
+then
+	icp201xx -I -a 0x64 start
+else
+	bmp388 -I -a 0x77 start
+>>>>>>> upstream/stable
 fi
 
 #external baro
@@ -130,7 +164,12 @@ if ver hwtypecmp V6X002001
 then
 	icp201xx -X start
 else
-	bmp388 -X start
+	if ver hwtypecmp V6X21
+	then
+		icp201xx -X start
+	else
+		bmp388 -X start
+	fi
 fi
 
 # Baro on I2C3

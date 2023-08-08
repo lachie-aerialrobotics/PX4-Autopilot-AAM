@@ -87,15 +87,32 @@ MixingOutput::MixingOutput(const char *param_prefix, uint8_t max_num_outputs, Ou
 
 	px4_sem_init(&_lock, 0, 1);
 
+<<<<<<< HEAD
 	initParamHandles();
+=======
+	_use_dynamic_mixing = _param_sys_ctrl_alloc.get();
+
+	if (_use_dynamic_mixing) {
+		initParamHandles();
+
+		for (unsigned i = 0; i < MAX_ACTUATORS; i++) {
+			_failsafe_value[i] = UINT16_MAX;
+		}
+
+		updateParams();
+		_outputs_pub.advertise();
+>>>>>>> upstream/stable
 
 	for (unsigned i = 0; i < MAX_ACTUATORS; i++) {
 		_failsafe_value[i] = UINT16_MAX;
 	}
 
+<<<<<<< HEAD
 	updateParams();
 
 	_outputs_pub.advertise();
+=======
+>>>>>>> upstream/stable
 }
 
 MixingOutput::~MixingOutput()
@@ -704,3 +721,126 @@ MixingOutput::actualFailsafeValue(int index) const
 
 	return value;
 }
+<<<<<<< HEAD
+=======
+
+void
+MixingOutput::reorderOutputs(uint16_t values[MAX_ACTUATORS])
+{
+	if (MAX_ACTUATORS < 4) {
+		return;
+	}
+
+	if ((MotorOrdering)_param_mot_ordering.get() == MotorOrdering::Betaflight) {
+		/*
+		 * Betaflight default motor ordering:
+		 * 4     2
+		 *    ^
+		 * 3     1
+		 */
+		const uint16_t value_tmp[4] = {values[0], values[1], values[2], values[3] };
+		values[0] = value_tmp[3];
+		values[1] = value_tmp[0];
+		values[2] = value_tmp[1];
+		values[3] = value_tmp[2];
+	}
+
+	/* else: PX4, no need to reorder
+	 * 3     1
+	 *    ^
+	 * 2     4
+	 */
+}
+
+int MixingOutput::reorderedMotorIndex(int index) const
+{
+	if ((MotorOrdering)_param_mot_ordering.get() == MotorOrdering::Betaflight) {
+		switch (index) {
+		case 0: return 1;
+
+		case 1: return 2;
+
+		case 2: return 3;
+
+		case 3: return 0;
+		}
+	}
+
+	return index;
+}
+
+int MixingOutput::controlCallback(uintptr_t handle, uint8_t control_group, uint8_t control_index, float &input)
+{
+	const MixingOutput *output = (const MixingOutput *)handle;
+
+	input = output->_controls[control_group].control[control_index];
+
+	/* limit control input */
+	input = math::constrain(input, -1.f, 1.f);
+
+	/* motor spinup phase - lock throttle to zero */
+	if (output->_output_state == OutputLimitState::RAMP) {
+		if ((control_group == actuator_controls_s::GROUP_INDEX_ATTITUDE ||
+		     control_group == actuator_controls_s::GROUP_INDEX_ATTITUDE_ALTERNATE) &&
+		    control_index == actuator_controls_s::INDEX_THROTTLE) {
+			/* limit the throttle output to zero during motor spinup,
+			 * as the motors cannot follow any demand yet
+			 */
+			input = 0.0f;
+		}
+	}
+
+	/* throttle not arming - mark throttle input as invalid */
+	if (output->armNoThrottle() && !output->_armed.in_esc_calibration_mode) {
+		if ((control_group == actuator_controls_s::GROUP_INDEX_ATTITUDE ||
+		     control_group == actuator_controls_s::GROUP_INDEX_ATTITUDE_ALTERNATE) &&
+		    control_index == actuator_controls_s::INDEX_THROTTLE) {
+			/* set the throttle to an invalid value */
+			input = NAN;
+		}
+	}
+
+	return 0;
+}
+
+void MixingOutput::resetMixer()
+{
+	if (_mixers != nullptr) {
+		delete _mixers;
+		_mixers = nullptr;
+		_groups_required = 0;
+	}
+
+	_interface.mixerChanged();
+}
+
+int MixingOutput::loadMixer(const char *buf, unsigned len)
+{
+	if (_mixers == nullptr) {
+		_mixers = new MixerGroup();
+	}
+
+	if (_mixers == nullptr) {
+		_groups_required = 0;
+		return -ENOMEM;
+	}
+
+	int ret = _mixers->load_from_buf(controlCallback, (uintptr_t)this, buf, len);
+
+	if (ret != 0) {
+		PX4_ERR("mixer load failed with %d", ret);
+		delete _mixers;
+		_mixers = nullptr;
+		_groups_required = 0;
+		return ret;
+	}
+
+	_mixers->groups_required(_groups_required);
+	PX4_DEBUG("loaded mixers \n%s\n", buf);
+
+	_outputs_pub.advertise();
+	updateParams();
+	_interface.mixerChanged();
+	return ret;
+}
+>>>>>>> upstream/stable

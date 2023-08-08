@@ -267,7 +267,15 @@ else
 	#
 	# Start IO for PWM output or RC input if enabled
 	#
+<<<<<<< HEAD
 	if param compare -s SYS_USE_IO 1
+=======
+	# Check if PX4IO present and update firmware if needed.
+	# Assumption IOFW set to firmware file and IO_PRESENT = no
+	#
+
+	if [ -f $IOFW ]
+>>>>>>> upstream/stable
 	then
 		# Check if PX4IO present and update firmware if needed.
 		if [ -f $IOFW ]
@@ -517,6 +525,7 @@ else
 	if param greater -s UAVCAN_ENABLE 0
 	then
 		# Start core UAVCAN module.
+<<<<<<< HEAD
 		if ! uavcan start
 		then
 			tune_control play error
@@ -525,6 +534,21 @@ else
 		if param greater -s CYPHAL_ENABLE 0
 		then
 			cyphal start
+=======
+		if uavcan start
+		then
+			if param greater UAVCAN_ENABLE 2
+			then
+				set OUTPUT_MODE uavcan_esc
+			fi
+		else
+			tune_control play error
+		fi
+	else
+		if param greater -s UAVCAN_V1_ENABLE 0
+		then
+			uavcan_v1 start
+>>>>>>> upstream/stable
 		fi
 	fi
 

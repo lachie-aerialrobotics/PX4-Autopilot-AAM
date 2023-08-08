@@ -51,7 +51,11 @@
 #include <nuttx/usb/usbdev.h>
 #include <nuttx/usb/usbdev_trace.h>
 
+<<<<<<< HEAD
 #include <arm_internal.h>
+=======
+#include <arm_arch.h>
+>>>>>>> upstream/stable
 #include <chip.h>
 #include <stm32_gpio.h>
 #include <stm32_otg.h>

@@ -129,6 +129,8 @@
 
 /* I2C busses */
 
+#define BOARD_MTD_NUM_EEPROM        2 /* MTD: base_eeprom, imu_eeprom*/
+
 /* Devices on the onboard buses.
  *
  * Note that these are unshifted addresses.
@@ -215,7 +217,12 @@
 #define GPIO_HW_VER_SENSE      /* PH3 */  GPIO_ADC3_INP14
 #define HW_INFO_INIT_PREFIX    "V6X"
 
+<<<<<<< HEAD
 #define BOARD_NUM_SPI_CFG_HW_VERSIONS 11 // Rev 0 and Rev 3,4 Sensor sets
+=======
+#define BOARD_NUM_SPI_CFG_HW_VERSIONS 9 // Rev 0 and Rev 3,4 Sensor sets
+
+>>>>>>> upstream/stable
 //                 Base/FMUM
 #define V6X00   HW_VER_REV(0x0,0x0) // FMUV6X,                 Rev 0
 #define V6X01   HW_VER_REV(0x0,0x1) // FMUV6X,     BMI388 I2C2 Rev 1
@@ -233,11 +240,14 @@
 #define V6X51   HW_VER_REV(0x5,0x1) // FMUV6X,     BMI388 I2C2    HB Mini Rev 1
 #define V6X53   HW_VER_REV(0x5,0x3) // FMUV6X,     Sensor Set     HB Mini Rev 3
 #define V6X54   HW_VER_REV(0x5,0x4) // FMUV6X,     Sensor Set     HB Mini Rev 4
+<<<<<<< HEAD
 #define V6X90   HW_VER_REV(0x9,0x0) //                         Rev 0
 #define V6X0910   HW_VER_REV(0x9,0x10)  // FMUV6X,     rev from EEPROM     Auterion Skynode ver9
 #define V6X1010   HW_VER_REV(0x10,0x10) // FMUV6X,     rev from EEPROM     Auterion Skynode ver10
 
 
+=======
+>>>>>>> upstream/stable
 
 #define UAVCAN_NUM_IFACES_RUNTIME  1
 

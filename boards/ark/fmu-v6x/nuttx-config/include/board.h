@@ -1,7 +1,11 @@
 /************************************************************************************
  * nuttx-configs/px4_fmu-v6x/include/board.h
  *
+<<<<<<< HEAD
  *   Copyright (C) 2016-2022 Gregory Nutt. All rights reserved.
+=======
+ *   Copyright (C) 2016-2019 Gregory Nutt. All rights reserved.
+>>>>>>> upstream/stable
  *   Authors: David Sidrane <david.sidrane@nscdg.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -302,7 +306,11 @@
 #define STM32_SDMMC_CLKCR_EDGE      STM32_SDMMC_CLKCR_NEGEDGE
 
 /* LED definitions ******************************************************************/
+<<<<<<< HEAD
 /* The ARKV6X board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
+=======
+/* The PX4 FMUV6X board has three, LED_GREEN a Green LED, LED_BLUE a Blue LED and
+>>>>>>> upstream/stable
  * LED_RED a Red LED, that can be controlled by software.
  *
  * If CONFIG_ARCH_LEDS is not defined, then the user can control the LEDs in any way.

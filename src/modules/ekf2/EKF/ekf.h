@@ -906,6 +906,7 @@ private:
 
 	void clearInhibitedStateKalmanGains(Vector24f &K) const
 	{
+<<<<<<< HEAD
 		// gyro bias: states 10, 11, 12
 		for (unsigned i = 0; i < 3; i++) {
 			if (_gyro_bias_inhibit[i]) {
@@ -932,6 +933,23 @@ private:
 			K(19) = 0.f;
 			K(20) = 0.f;
 			K(21) = 0.f;
+=======
+		// K(HP) and (KH)P are equivalent (matrix multiplication is associative)
+		// but K(HP) is computationally much less expensive
+		Vector24f HP;
+		for (unsigned i = 0; i < H.non_zeros(); i++) {
+			const size_t row = H.index(i);
+			for (unsigned col = 0; col < _k_num_states; col++) {
+				HP(col) = HP(col) + H.atCompressedIndex(i) * P(row, col);
+			}
+		}
+
+		SquareMatrix24f KHP;
+		for (unsigned row = 0; row < _k_num_states; row++) {
+			for (unsigned col = 0; col < _k_num_states; col++) {
+				KHP(row, col) = K(row) * HP(col);
+			}
+>>>>>>> upstream/stable
 		}
 
 		// wind: states 22, 23

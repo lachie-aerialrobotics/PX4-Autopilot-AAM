@@ -90,14 +90,20 @@ enum class BANK_0 : uint8_t {
 	GYRO_CONFIG1       = 0x51,
 	GYRO_ACCEL_CONFIG0 = 0x52,
 	ACCEL_CONFIG1      = 0x53,
+<<<<<<< HEAD
 	TMST_CONFIG        = 0x54,
+=======
+>>>>>>> upstream/stable
 
 	FIFO_CONFIG1       = 0x5F,
 	FIFO_CONFIG2       = 0x60,
 	FIFO_CONFIG3       = 0x61,
 
 	INT_CONFIG0        = 0x63,
+<<<<<<< HEAD
 	INT_CONFIG1        = 0x64,
+=======
+>>>>>>> upstream/stable
 
 	INT_SOURCE0        = 0x65,
 
@@ -108,18 +114,27 @@ enum class BANK_0 : uint8_t {
 };
 
 enum class BANK_1 : uint8_t {
+<<<<<<< HEAD
 	GYRO_CONFIG_STATIC2  = 0x0B,
 	GYRO_CONFIG_STATIC3  = 0x0C,
 	GYRO_CONFIG_STATIC4  = 0x0D,
 	GYRO_CONFIG_STATIC5  = 0x0E,
 
 	INTF_CONFIG5         = 0x7B,
+=======
+	GYRO_CONFIG_STATIC2 = 0x0B,
+
+	INTF_CONFIG5        = 0x7B,
+>>>>>>> upstream/stable
 };
 
 enum class BANK_2 : uint8_t {
 	ACCEL_CONFIG_STATIC2 = 0x03,
+<<<<<<< HEAD
 	ACCEL_CONFIG_STATIC3 = 0x04,
 	ACCEL_CONFIG_STATIC4 = 0x05,
+=======
+>>>>>>> upstream/stable
 };
 
 };
@@ -158,12 +173,15 @@ enum SIGNAL_PATH_RESET_BIT : uint8_t {
 	FIFO_FLUSH      = Bit1,
 };
 
+<<<<<<< HEAD
 enum INTF_CONFIG1_BIT : uint8_t {
 	RTC_MODE = Bit2, // 0: No input RTC clock is required, 1: RTC clock input is required
 	CLKSEL = Bit0,
 	CLKSEL_CLEAR = Bit1,
 };
 
+=======
+>>>>>>> upstream/stable
 // PWR_MGMT0
 enum PWR_MGMT0_BIT : uint8_t {
 	GYRO_MODE_LOW_NOISE  = Bit3 | Bit2, // 11: Places gyroscope in Low Noise (LN) Mode
@@ -238,6 +256,7 @@ enum ACCEL_CONFIG1_BIT : uint8_t {
 	ACCEL_UI_FILT_ORD = Bit4 | Bit3, // 00: 1st Order
 };
 
+<<<<<<< HEAD
 // TMST_CONFIG
 enum TMST_CONFIG_BIT : uint8_t {
 	TMST_TO_REGS_EN = Bit4, // 1: TMST_VALUE[19:0] read returns timestamp value
@@ -247,12 +266,17 @@ enum TMST_CONFIG_BIT : uint8_t {
 	TMST_EN		= Bit0, // 1: Time Stamp register enable (default)
 };
 
+=======
+>>>>>>> upstream/stable
 // FIFO_CONFIG1
 enum FIFO_CONFIG1_BIT : uint8_t {
 	FIFO_RESUME_PARTIAL_RD = Bit6,
 	FIFO_WM_GT_TH          = Bit5,
 	FIFO_HIRES_EN          = Bit4,
+<<<<<<< HEAD
 	FIFO_TMST_FSYNC_EN     = Bit3,
+=======
+>>>>>>> upstream/stable
 	FIFO_TEMP_EN           = Bit2,
 	FIFO_GYRO_EN           = Bit1,
 	FIFO_ACCEL_EN          = Bit0,
@@ -264,11 +288,14 @@ enum INT_CONFIG0_BIT : uint8_t {
 	CLEAR_ON_FIFO_READ = Bit3,
 };
 
+<<<<<<< HEAD
 // INT_CONFIG1
 enum INT_CONFIG1_BIT : uint8_t {
 	INT_ASYNC_RESET  = Bit4,
 };
 
+=======
+>>>>>>> upstream/stable
 // INT_SOURCE0
 enum INT_SOURCE0_BIT : uint8_t {
 	UI_FSYNC_INT1_EN   = Bit6,
@@ -282,12 +309,19 @@ enum INT_SOURCE0_BIT : uint8_t {
 
 // REG_BANK_SEL
 enum REG_BANK_SEL_BIT : uint8_t {
+<<<<<<< HEAD
 	// 2:0 BANK_SEL
 	BANK_SEL_0 = 0,           // 000: Bank 0 (default)
 	BANK_SEL_1 = Bit0,        // 001: Bank 1
 	BANK_SEL_2 = Bit1,        // 010: Bank 2
 	BANK_SEL_3 = Bit1 | Bit0, // 011: Bank 3
 	BANK_SEL_4 = Bit2,        // 100: Bank 4
+=======
+	USER_BANK_0 = 0,           // 0: Select USER BANK 0.
+	USER_BANK_1 = Bit4,        // 1: Select USER BANK 1.
+	USER_BANK_2 = Bit5,        // 2: Select USER BANK 2.
+	USER_BANK_3 = Bit5 | Bit4, // 3: Select USER BANK 3.
+>>>>>>> upstream/stable
 };
 
 
@@ -295,6 +329,7 @@ enum REG_BANK_SEL_BIT : uint8_t {
 
 // GYRO_CONFIG_STATIC2
 enum GYRO_CONFIG_STATIC2_BIT : uint8_t {
+<<<<<<< HEAD
 	GYRO_AAF_DIS = Bit1, // 1: Disable gyroscope anti-aliasing filter
 	GYRO_NF_DIS  = Bit0, // 1: Disable Notch Filter
 };
@@ -337,11 +372,18 @@ enum INTF_CONFIG5_BIT : uint8_t {
 	PIN9_FUNCTION_RESET_SET   = 0,
 	PIN9_FUNCTION_RESET_CLEAR = Bit2 | Bit1,
 };
+=======
+	GYRO_AAF_DIS = Bit1,
+	GYRO_NF_DIS  = Bit0,
+};
+
+>>>>>>> upstream/stable
 
 //---------------- BANK2 Register bits
 
 // ACCEL_CONFIG_STATIC2
 enum ACCEL_CONFIG_STATIC2_BIT : uint8_t {
+<<<<<<< HEAD
 	// 6:1 ACCEL_AAF_DELT
 	//  585 Hz = 13 (0b00'1101)
 	ACCEL_AAF_DELT_585HZ_SET   = Bit4 | Bit3 | Bit1,
@@ -370,6 +412,9 @@ enum ACCEL_CONFIG_STATIC4_BIT : uint8_t {
 	//  585 Hz = 170 (0b0000'1010'1010)
 	ACCEL_AAF_DELTSQR_MSB_SET      = 0,
 	ACCEL_AAF_DELTSQR_MSB_CLEAR    = Bit3 | Bit2 | Bit1 | Bit0,
+=======
+	ACCEL_AAF_DIS = Bit0,
+>>>>>>> upstream/stable
 };
 
 namespace FIFO
@@ -408,7 +453,11 @@ enum FIFO_HEADER_BIT : uint8_t {
 	HEADER_ACCEL           = Bit6, // 1: Packet is sized so that accel data have location in the packet, FIFO_ACCEL_EN must be 1
 	HEADER_GYRO            = Bit5, // 1: Packet is sized so that gyro data have location in the packet, FIFO_GYRO_EN must be1
 	HEADER_20              = Bit4, // 1: Packet has a new and valid sample of extended 20-bit data for gyro and/or accel
+<<<<<<< HEAD
 	HEADER_TIMESTAMP_FSYNC = Bit3 | Bit2, // 10: Packet contains ODR Timestamp
+=======
+	HEADER_TIMESTAMP_FSYNC = Bit3 | Bit2,
+>>>>>>> upstream/stable
 	HEADER_ODR_ACCEL       = Bit1, // 1: The ODR for accel is different for this accel data packet compared to the previous accel packet
 	HEADER_ODR_GYRO        = Bit0, // 1: The ODR for gyro is different for this gyro data packet compared to the previous gyro packet
 };

@@ -162,6 +162,8 @@ void PWMOut::Run()
 		return;
 	}
 
+	SmartLock lock_guard(_lock);
+
 	perf_begin(_cycle_perf);
 	perf_count(_interval_perf);
 

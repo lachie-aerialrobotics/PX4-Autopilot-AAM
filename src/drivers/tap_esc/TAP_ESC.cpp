@@ -335,6 +335,8 @@ void TAP_ESC::Run()
 		return;
 	}
 
+	SmartLock lock_guard(_lock);
+
 	// push backup schedule
 	ScheduleDelayed(20_ms);
 

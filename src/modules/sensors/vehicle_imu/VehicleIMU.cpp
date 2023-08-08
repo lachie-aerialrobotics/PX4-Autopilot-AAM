@@ -561,6 +561,7 @@ bool VehicleIMU::Publish()
 
 			// vehicle_imu_status
 			//  publish before vehicle_imu so that error counts are available synchronously if needed
+<<<<<<< HEAD
 			const bool status_publish_interval_exceeded = (hrt_elapsed_time(&_status.timestamp) >= kIMUStatusPublishingInterval);
 
 			if (_raw_accel_mean.valid() && _raw_gyro_mean.valid()
@@ -582,6 +583,20 @@ bool VehicleIMU::Publish()
 					// variance from R * COV * R^T
 					const Matrix3f cov = R * _raw_accel_mean.covariance() * R.transpose();
 					cov.diag().copyTo(_status.var_accel);
+=======
+			const bool imu_status_publishing_interval_exceeded = hrt_elapsed_time(&_status.timestamp) >=
+					kIMUStatusPublishingInterval;
+
+			if (_raw_accel_mean.valid() && _raw_gyro_mean.valid()
+			    && (_publish_status || imu_status_publishing_interval_exceeded)) {
+
+				// Accel
+				_status.accel_device_id = _accel_calibration.device_id();
+
+				// accel mean and variance
+				Vector3f(_accel_calibration.rotation() * _raw_accel_mean.mean()).copyTo(_status.mean_accel);
+				Vector3f(_accel_calibration.rotation() * _raw_accel_mean.variance()).copyTo(_status.var_accel);
+>>>>>>> upstream/stable
 
 					// temperature
 					if ((_accel_temperature_sum_count > 0) && PX4_ISFINITE(_accel_temperature_sum)) {
@@ -593,11 +608,19 @@ bool VehicleIMU::Publish()
 				}
 
 				// Gyro
+<<<<<<< HEAD
 				{
 					_status.gyro_device_id = _gyro_calibration.device_id();
 
 					_status.gyro_rate_hz = 1e6f / _gyro_mean_interval_us.mean();
 					_status.gyro_raw_rate_hz = 1e6f / _gyro_fifo_mean_interval_us.mean(); // FIFO
+=======
+				_status.gyro_device_id = _gyro_calibration.device_id();
+
+				// gyro mean and variance
+				Vector3f(_gyro_calibration.rotation() * _raw_gyro_mean.mean()).copyTo(_status.mean_gyro);
+				Vector3f(_gyro_calibration.rotation() * _raw_gyro_mean.variance()).copyTo(_status.var_gyro);
+>>>>>>> upstream/stable
 
 					// gyro mean and variance
 					const Dcmf &R = _gyro_calibration.rotation();
@@ -607,6 +630,7 @@ bool VehicleIMU::Publish()
 					const Matrix3f cov = R * _raw_gyro_mean.covariance() * R.transpose();
 					cov.diag().copyTo(_status.var_gyro);
 
+<<<<<<< HEAD
 
 					// Gyro delta angle coning metric = length of coning corrections averaged since last status publication
 					_status.delta_angle_coning_metric = _coning_norm_accum / _coning_norm_accum_total_time_s;
@@ -622,12 +646,15 @@ bool VehicleIMU::Publish()
 					}
 				}
 
+=======
+>>>>>>> upstream/stable
 				// publish
 				_status.timestamp = hrt_absolute_time();
 				_vehicle_imu_status_pub.publish(_status);
 
 				_publish_status = false;
 
+<<<<<<< HEAD
 				if (status_publish_interval_exceeded) {
 					_raw_accel_mean.reset();
 					_accel_temperature_sum = NAN;
@@ -636,6 +663,11 @@ bool VehicleIMU::Publish()
 					_raw_gyro_mean.reset();
 					_gyro_temperature_sum = NAN;
 					_gyro_temperature_sum_count = 0;
+=======
+				if (imu_status_publishing_interval_exceeded) {
+					_raw_accel_mean.reset();
+					_raw_gyro_mean.reset();
+>>>>>>> upstream/stable
 				}
 			}
 

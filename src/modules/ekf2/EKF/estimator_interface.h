@@ -198,10 +198,20 @@ public:
 
 	int getNumberOfActiveHorizontalAidingSources() const;
 
+<<<<<<< HEAD
 	bool isOtherSourceOfVerticalPositionAidingThan(bool aiding_flag) const;
 	bool isVerticalPositionAidingActive() const;
 	bool isOnlyActiveSourceOfVerticalPositionAiding(const bool aiding_flag) const;
 	int getNumberOfActiveVerticalPositionAidingSources() const;
+=======
+	bool isVerticalVelocityAidingActive() const;
+	int getNumberOfActiveVerticalVelocityAidingSources() const;
+
+	const matrix::Quatf &getQuaternion() const { return _output_new.quat_nominal; }
+
+	// get the velocity of the body frame origin in local NED earth frame
+	Vector3f getVelocity() const { return _output_new.vel - _vel_imu_rel_body_ned; }
+>>>>>>> upstream/stable
 
 	bool isVerticalVelocityAidingActive() const;
 	int getNumberOfActiveVerticalVelocityAidingSources() const;

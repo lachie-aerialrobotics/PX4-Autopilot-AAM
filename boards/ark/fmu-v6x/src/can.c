@@ -32,11 +32,16 @@
  ****************************************************************************/
 
 /**
+<<<<<<< HEAD
  * @file can.c
+=======
+ * @file px4fmu_can.c
+>>>>>>> upstream/stable
  *
  * Board-specific CAN functions.
  */
 
+<<<<<<< HEAD
 #if !defined(CONFIG_CAN)
 
 #include <stdint.h>
@@ -57,6 +62,9 @@ uint16_t board_get_can_interfaces(void)
 }
 
 #else
+=======
+#ifdef CONFIG_CAN
+>>>>>>> upstream/stable
 
 #include <errno.h>
 #include <debug.h>
@@ -65,12 +73,21 @@ uint16_t board_get_can_interfaces(void)
 #include <arch/board/board.h>
 
 #include "chip.h"
+<<<<<<< HEAD
 #include "arm_internal.h"
+=======
+#include "arm_arch.h"
+>>>>>>> upstream/stable
 
 #include "chip.h"
 #include "stm32_can.h"
 #include "board_config.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CAN
+
+>>>>>>> upstream/stable
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
@@ -139,4 +156,10 @@ int can_devinit(void)
 
 	return OK;
 }
+<<<<<<< HEAD
+=======
+
+#endif
+
+>>>>>>> upstream/stable
 #endif /* CONFIG_CAN */

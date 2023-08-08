@@ -162,6 +162,8 @@ void PCA9685Wrapper::Run()
 		return;
 	}
 
+	SmartLock lock_guard(_lock);
+
 	perf_begin(_cycle_perf);
 
 	switch (_state) {

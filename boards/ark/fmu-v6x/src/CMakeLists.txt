@@ -31,19 +31,28 @@
 #
 ############################################################################
 if("${PX4_BOARD_LABEL}" STREQUAL  "bootloader")
+<<<<<<< HEAD
 	add_compile_definitions(BOOTLOADER)
 	add_library(drivers_board
 		bootloader_main.c
 		init.c
 		usb.c
 		timer_config.cpp
+=======
+	add_library(drivers_board
+		bootloader_main.c
+		usb.c
+>>>>>>> upstream/stable
 	)
 	target_link_libraries(drivers_board
 		PRIVATE
 			nuttx_arch # sdio
 			nuttx_drivers # sdio
+<<<<<<< HEAD
 			px4_layer #gpio
 			arch_io_pins # iotimer
+=======
+>>>>>>> upstream/stable
 			bootloader
 	)
 	target_include_directories(drivers_board PRIVATE ${PX4_SOURCE_DIR}/platforms/nuttx/src/bootloader/common)
@@ -58,8 +67,11 @@ else()
 		manifest.c
 		sdio.c
 		spi.cpp
+<<<<<<< HEAD
 		spix_sync.c
 		spix_sync.h
+=======
+>>>>>>> upstream/stable
 		timer_config.cpp
 		usb.c
 	)
@@ -67,7 +79,10 @@ else()
 
 	target_link_libraries(drivers_board
 		PRIVATE
+<<<<<<< HEAD
 			arch_io_pins
+=======
+>>>>>>> upstream/stable
 			arch_spi
 			arch_board_hw_info
 			drivers__led # drv_led_start

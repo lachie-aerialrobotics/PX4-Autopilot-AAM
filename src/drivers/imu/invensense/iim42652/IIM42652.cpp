@@ -1,6 +1,10 @@
 /****************************************************************************
  *
+<<<<<<< HEAD
  *   Copyright (c) 2023 PX4 Development Team. All rights reserved.
+=======
+ *   Copyright (c) 2022 PX4 Development Team. All rights reserved.
+>>>>>>> upstream/stable
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +44,14 @@ static constexpr int16_t combine(uint8_t msb, uint8_t lsb)
 	return (msb << 8u) | lsb;
 }
 
+<<<<<<< HEAD
 static constexpr uint16_t combine_uint(uint8_t msb, uint8_t lsb)
 {
 	return (msb << 8u) | lsb;
 }
 
+=======
+>>>>>>> upstream/stable
 IIM42652::IIM42652(const I2CSPIDriverConfig &config) :
 	SPI(config),
 	I2CSPIDriver(config),
@@ -56,6 +63,7 @@ IIM42652::IIM42652(const I2CSPIDriverConfig &config) :
 		_drdy_missed_perf = perf_alloc(PC_COUNT, MODULE_NAME": DRDY missed");
 	}
 
+<<<<<<< HEAD
 	if (config.custom1 != 0) {
 		_enable_clock_input = true;
 		_input_clock_freq = config.custom1;
@@ -65,6 +73,8 @@ IIM42652::IIM42652(const I2CSPIDriverConfig &config) :
 		_enable_clock_input = false;
 	}
 
+=======
+>>>>>>> upstream/stable
 	ConfigureSampleRate(_px4_gyro.get_max_rate_hz());
 }
 
@@ -110,7 +120,10 @@ void IIM42652::print_status()
 	I2CSPIDriverBase::print_status();
 
 	PX4_INFO("FIFO empty interval: %d us (%.1f Hz)", _fifo_empty_interval_us, 1e6 / _fifo_empty_interval_us);
+<<<<<<< HEAD
 	PX4_INFO("Clock input: %s", _enable_clock_input ? "enabled" : "disabled");
+=======
+>>>>>>> upstream/stable
 
 	perf_print_counter(_bad_register_perf);
 	perf_print_counter(_bad_transfer_perf);
@@ -137,7 +150,11 @@ int IIM42652::probe()
 			if (bank >= 1 && bank <= 3) {
 				DEVICE_DEBUG("incorrect register bank for WHO_AM_I REG_BANK_SEL:0x%02x, bank:%d", reg_bank_sel, bank);
 				// force bank selection and retry
+<<<<<<< HEAD
 				SelectRegisterBank(REG_BANK_SEL_BIT::BANK_SEL_0, true);
+=======
+				SelectRegisterBank(REG_BANK_SEL_BIT::USER_BANK_0, true);
+>>>>>>> upstream/stable
 			}
 		}
 	}
@@ -186,9 +203,27 @@ void IIM42652::RunImpl()
 
 	case STATE::CONFIGURE:
 		if (Configure()) {
+<<<<<<< HEAD
 			// if configure succeeded then reset the FIFO
 			_state = STATE::FIFO_RESET;
 			ScheduleDelayed(1_ms);
+=======
+			// if configure succeeded then start reading from FIFO
+			_state = STATE::FIFO_READ;
+
+			if (DataReadyInterruptConfigure()) {
+				_data_ready_interrupt_enabled = true;
+
+				// backup schedule as a watchdog timeout
+				ScheduleDelayed(100_ms);
+
+			} else {
+				_data_ready_interrupt_enabled = false;
+				ScheduleOnInterval(_fifo_empty_interval_us, _fifo_empty_interval_us);
+			}
+
+			FIFOReset();
+>>>>>>> upstream/stable
 
 		} else {
 			// CONFIGURE not complete
@@ -205,6 +240,7 @@ void IIM42652::RunImpl()
 
 		break;
 
+<<<<<<< HEAD
 	case STATE::FIFO_RESET:
 
 		_state = STATE::FIFO_READ;
@@ -223,6 +259,8 @@ void IIM42652::RunImpl()
 
 		break;
 
+=======
+>>>>>>> upstream/stable
 	case STATE::FIFO_READ: {
 			hrt_abstime timestamp_sample = now;
 			uint8_t samples = 0;
@@ -349,6 +387,7 @@ void IIM42652::ConfigureFIFOWatermark(uint8_t samples)
 	}
 }
 
+<<<<<<< HEAD
 void IIM42652::ConfigureCLKIN()
 {
 	for (auto &r0 : _register_bank0_cfg) {
@@ -365,6 +404,8 @@ void IIM42652::ConfigureCLKIN()
 	}
 }
 
+=======
+>>>>>>> upstream/stable
 void IIM42652::SelectRegisterBank(enum REG_BANK_SEL_BIT bank, bool force)
 {
 	if (bank != _last_register_bank || force) {
@@ -508,7 +549,11 @@ uint16_t IIM42652::FIFOReadCount()
 	// read FIFO count
 	uint8_t fifo_count_buf[3] {};
 	fifo_count_buf[0] = static_cast<uint8_t>(Register::BANK_0::FIFO_COUNTH) | DIR_READ;
+<<<<<<< HEAD
 	SelectRegisterBank(REG_BANK_SEL_BIT::BANK_SEL_0);
+=======
+	SelectRegisterBank(REG_BANK_SEL_BIT::USER_BANK_0);
+>>>>>>> upstream/stable
 
 	if (transfer(fifo_count_buf, fifo_count_buf, sizeof(fifo_count_buf)) != PX4_OK) {
 		perf_count(_bad_transfer_perf);
@@ -522,7 +567,11 @@ bool IIM42652::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
 {
 	FIFOTransferBuffer buffer{};
 	const size_t transfer_size = math::min(samples * sizeof(FIFO::DATA) + 4, FIFO::SIZE);
+<<<<<<< HEAD
 	SelectRegisterBank(REG_BANK_SEL_BIT::BANK_SEL_0);
+=======
+	SelectRegisterBank(REG_BANK_SEL_BIT::USER_BANK_0);
+>>>>>>> upstream/stable
 
 	if (transfer((uint8_t *)&buffer, (uint8_t *)&buffer, transfer_size) != PX4_OK) {
 		perf_count(_bad_transfer_perf);
@@ -575,10 +624,13 @@ bool IIM42652::FIFORead(const hrt_abstime &timestamp_sample, uint8_t samples)
 			// Packet does not contain a new and valid extended 20-bit data
 			valid = false;
 
+<<<<<<< HEAD
 		} else if ((FIFO_HEADER & FIFO::FIFO_HEADER_BIT::HEADER_TIMESTAMP_FSYNC) != Bit3) {
 			// Packet does not contain ODR timestamp
 			valid = false;
 
+=======
+>>>>>>> upstream/stable
 		} else if (FIFO_HEADER & FIFO::FIFO_HEADER_BIT::HEADER_ODR_ACCEL) {
 			// accel ODR changed
 			valid = false;
@@ -641,12 +693,17 @@ void IIM42652::ProcessAccel(const hrt_abstime &timestamp_sample, const FIFO::DAT
 	sensor_accel_fifo_s accel{};
 	accel.timestamp_sample = timestamp_sample;
 	accel.samples = 0;
+<<<<<<< HEAD
+=======
+	accel.dt = FIFO_SAMPLE_DT;
+>>>>>>> upstream/stable
 
 	// 18-bits of accelerometer data
 	bool scale_20bit = false;
 
 	// first pass
 	for (int i = 0; i < samples; i++) {
+<<<<<<< HEAD
 
 		uint16_t timestamp_fifo = combine_uint(fifo[i].TimeStamp_h, fifo[i].TimeStamp_l);
 
@@ -657,6 +714,8 @@ void IIM42652::ProcessAccel(const hrt_abstime &timestamp_sample, const FIFO::DAT
 			accel.dt = (float)timestamp_fifo * FIFO_TIMESTAMP_SCALING;
 		}
 
+=======
+>>>>>>> upstream/stable
 		// 20 bit hires mode
 		// Sign extension + Accel [19:12] + Accel [11:4] + Accel [3:2] (20 bit extension byte)
 		// Accel data is 18 bit ()
@@ -737,12 +796,17 @@ void IIM42652::ProcessGyro(const hrt_abstime &timestamp_sample, const FIFO::DATA
 	sensor_gyro_fifo_s gyro{};
 	gyro.timestamp_sample = timestamp_sample;
 	gyro.samples = 0;
+<<<<<<< HEAD
+=======
+	gyro.dt = FIFO_SAMPLE_DT;
+>>>>>>> upstream/stable
 
 	// 20-bits of gyroscope data
 	bool scale_20bit = false;
 
 	// first pass
 	for (int i = 0; i < samples; i++) {
+<<<<<<< HEAD
 
 		uint16_t timestamp_fifo = combine_uint(fifo[i].TimeStamp_h, fifo[i].TimeStamp_l);
 
@@ -753,6 +817,8 @@ void IIM42652::ProcessGyro(const hrt_abstime &timestamp_sample, const FIFO::DATA
 			gyro.dt = (float)timestamp_fifo * FIFO_TIMESTAMP_SCALING;
 		}
 
+=======
+>>>>>>> upstream/stable
 		// 20 bit hires mode
 		// Gyro [19:12] + Gyro [11:4] + Gyro [3:0] (bottom 4 bits of 20 bit extension byte)
 		int32_t gyro_x = reassemble_20bit(fifo[i].GYRO_DATA_X1, fifo[i].GYRO_DATA_X0, fifo[i].Ext_Accel_X_Gyro_X & 0x0F);

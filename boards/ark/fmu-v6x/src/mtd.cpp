@@ -66,8 +66,13 @@ static const px4_mtd_entry_t base_eeprom = {
 	.npart = 2,
 	.partd = {
 		{
+<<<<<<< HEAD
 			.type = MTD_MFT_VER,
 			.path = "/fs/mtd_mft_ver",
+=======
+			.type = MTD_MFT,
+			.path = "/fs/mtd_mft",
+>>>>>>> upstream/stable
 			.nblocks = 248
 		},
 		{
@@ -94,9 +99,13 @@ static const px4_mft_entry_s mtd_mft = {
 
 static const px4_mft_s mft = {
 	.nmft = 1,
+<<<<<<< HEAD
 	.mfts = {
 		&mtd_mft
 	}
+=======
+	.mfts = &mtd_mft
+>>>>>>> upstream/stable
 };
 
 const px4_mft_s *board_get_manifest(void)

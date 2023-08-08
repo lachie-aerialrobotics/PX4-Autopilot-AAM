@@ -118,11 +118,29 @@ bool Ekf::fuseMag(const Vector3f &mag, estimator_aid_source3d_s &aid_src_mag, bo
 		aid_src_mag.innovation[i] = mag_innov(i);
 	}
 
+<<<<<<< HEAD
 	aid_src_mag.fusion_enabled = _control_status.flags.mag_3D && update_all_states;
 
 	// do not use the synthesized measurement for the magnetomter Z component for 3D fusion
 	if (_control_status.flags.synthetic_mag_z) {
 		aid_src_mag.innovation[2] = 0.0f;
+=======
+		const bool innov_check_fail = (_mag_test_ratio(index) > 1.0f);
+
+		if (innov_check_fail) {
+			all_innovation_checks_passed = false;
+		}
+
+		if (index == 0) {
+			_innov_check_fail_status.flags.reject_mag_x = innov_check_fail;
+
+		} else if (index == 1) {
+			_innov_check_fail_status.flags.reject_mag_y = innov_check_fail;
+
+		} else {
+			_innov_check_fail_status.flags.reject_mag_z = innov_check_fail;
+		}
+>>>>>>> upstream/stable
 	}
 
 	const float innov_gate = math::max(_params.mag_innov_gate, 1.f);

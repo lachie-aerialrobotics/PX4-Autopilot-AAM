@@ -83,6 +83,10 @@ void Standard::update_vtol_state()
 			// in mc mode
 			_vtol_mode = vtol_mode::MC_MODE;
 			mc_weight = 1.0f;
+<<<<<<< HEAD
+=======
+			_reverse_output = 0.0f;
+>>>>>>> upstream/stable
 
 		} else if (_vtol_mode == vtol_mode::FW_MODE) {
 			// Regular backtransition

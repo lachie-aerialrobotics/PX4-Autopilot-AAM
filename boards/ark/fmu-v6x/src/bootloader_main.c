@@ -1,6 +1,10 @@
 /****************************************************************************
  *
+<<<<<<< HEAD
  *   Copyright (c) 2022 PX4 Development Team. All rights reserved.
+=======
+ *   Copyright (c) 2019, 2021 PX4 Development Team. All rights reserved.
+>>>>>>> upstream/stable
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

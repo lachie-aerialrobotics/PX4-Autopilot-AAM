@@ -186,6 +186,7 @@ PARAM_DEFINE_INT32(UAVCAN_LGT_NAV, 3);
 PARAM_DEFINE_INT32(UAVCAN_LGT_LAND, 0);
 
 /**
+<<<<<<< HEAD
  * publish Arming Status stream
  *
  * Enable UAVCAN Arming Status stream publication
@@ -198,6 +199,8 @@ PARAM_DEFINE_INT32(UAVCAN_LGT_LAND, 0);
 PARAM_DEFINE_INT32(UAVCAN_PUB_ARM, 0);
 
 /**
+=======
+>>>>>>> upstream/stable
  * publish RTCM stream
  *
  * Enable UAVCAN RTCM stream publication
