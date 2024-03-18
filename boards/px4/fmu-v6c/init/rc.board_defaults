@@ -9,6 +9,7 @@ param set-default BAT2_V_DIV 18.1
 
 param set-default BAT1_A_PER_V 36.367515152
 param set-default BAT2_A_PER_V 36.367515152
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 param set-default SYS_USE_IO 1
@@ -22,3 +23,5 @@ param set-default MAV_2_RATE 100000
 param set-default MAV_2_REMOTE_PRT 14550
 param set-default MAV_2_UDP_PRT 14550
 >>>>>>> upstream/stable
+=======
+>>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889

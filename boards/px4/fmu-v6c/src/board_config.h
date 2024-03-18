@@ -147,14 +147,15 @@
 #define HW_INFO_INIT_REV       4 /* Offset in above string of the REV */
 >>>>>>> upstream/stable
 
-#define BOARD_NUM_SPI_CFG_HW_VERSIONS 3 // Rev 0, 10 and Mini Sensor sets
+#define BOARD_NUM_SPI_CFG_HW_VERSIONS 5 // Rev 0, 10 and Mini Sensor sets
 //                 Base/FMUM
 #define V6C00   HW_VER_REV(0x0,0x0) // FMUV6C,                 Rev 0  I2C4 External but with Internal devices
 #define V6C01   HW_VER_REV(0x0,0x1) // FMUV6C,                 Rev 1  I2C4 Internal I2C2 External
+#define V6C02   HW_VER_REV(0x0,0x2) // FMUV6C,                 Rev 2  I2C4 Internal I2C2 External,BMI088+ICM-42688P
 #define V6C10   HW_VER_REV(0x1,0x0) // NO PX4IO,               Rev 0  I2C4 External but with Internal devices
 #define V6C11   HW_VER_REV(0x1,0x1) // NO PX4IO,               Rev 1  I2C4 Internal I2C2 External
 #define V6C21   HW_VER_REV(0x2,0x1) // FMUV6CMini,             Rev 1  I2C4 Internal I2C2 External
-
+#define V6C22   HW_VER_REV(0x2,0x2) // FMUV6CMini,             Rev 2  I2C4 Internal I2C2 External,BMI088+ICM-42688P
 
 /* HEATER
  * PWM in future

@@ -39,8 +39,10 @@ px4_add_romfs_files(
 	1012_gazebo-classic_iris_rplidar
 	1013_gazebo-classic_iris_vision
 	1013_gazebo-classic_iris_vision.post
-	1015_gazebo-classic_iris_obs_avoid
-	1015_gazebo-classic_iris_obs_avoid.post
+	1014_gazebo-classic_iris_obs_avoid
+	1014_gazebo-classic_iris_obs_avoid.post
+	1015_gazebo-classic_iris_depth_camera
+	1016_gazebo-classic_iris_downward_depth_camera
 	1017_gazebo-classic_iris_opt_flow_mockup
 	1019_gazebo-classic_iris_dual_gps
 	1021_gazebo-classic_uuv_hippocampus
@@ -60,6 +62,7 @@ px4_add_romfs_files(
 	1042_gazebo-classic_tiltrotor
 	1043_gazebo-classic_standard_vtol_drop
 	1044_gazebo-classic_plane_lidar
+	1045_gazebo-classic_quadtailsitter
 	1060_gazebo-classic_rover
 	1061_gazebo-classic_r1_rover
 	1062_flightgear_tf-r1
@@ -76,6 +79,10 @@ px4_add_romfs_files(
 	4004_gz_standard_vtol
 	4005_gz_x500_vision
 	4006_gz_px4vision
+	4008_gz_advanced_plane
+	4009_gz_r1_rover
+	4010_gz_x500_mono_cam
+	4011_gz_lawnmower
 
 	4321_gz_hex_gz
 	4322_gz_hex_delta_gz
@@ -87,6 +94,8 @@ px4_add_romfs_files(
 
 	6011_gazebo-classic_typhoon_h480
 	6011_gazebo-classic_typhoon_h480.post
+
+	8011_gz_omnicopter
 
 	10015_gazebo-classic_iris
 	10016_none_iris
@@ -101,4 +110,6 @@ px4_add_romfs_files(
 
 	17001_flightgear_tf-g1
 	17002_flightgear_tf-g2
+
+	# [22000, 22999] Reserve for custom models
 )

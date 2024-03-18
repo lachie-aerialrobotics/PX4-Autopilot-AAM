@@ -128,6 +128,7 @@
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
         },
+<<<<<<< HEAD
         "python.autoComplete.extraPaths": [
                 "/home/aam01/aam_ws/devel/lib/python3/dist-packages",
                 "/opt/ros/noetic/lib/python3/dist-packages"
@@ -136,4 +137,7 @@
                 "/home/aam01/aam_ws/devel/lib/python3/dist-packages",
                 "/opt/ros/noetic/lib/python3/dist-packages"
         ]
+=======
+        "ros.distro": "humble"
+>>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 }

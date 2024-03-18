@@ -144,16 +144,27 @@ private:
 
 	bool _in_fw_or_transition_wo_tailsitter_transition{false}; // only run the FW attitude controller in these states
 
+	// enum for bitmask of VT_FW_DIFTHR_EN parameter options
+	enum class VTOLFixedWingDifferentialThrustEnabledBit : int32_t {
+		YAW_BIT = (1 << 0),
+		ROLL_BIT = (1 << 1),
+		PITCH_BIT = (1 << 2),
+	};
+
+	param_t _handle_param_vt_fw_difthr_en{PARAM_INVALID};
+	int32_t _param_vt_fw_difthr_en{0};
+
 	DEFINE_PARAMETERS(
 		(ParamFloat<px4::params::FW_ACRO_X_MAX>) _param_fw_acro_x_max,
 		(ParamFloat<px4::params::FW_ACRO_Y_MAX>) _param_fw_acro_y_max,
 		(ParamFloat<px4::params::FW_ACRO_Z_MAX>) _param_fw_acro_z_max,
+		(ParamInt<px4::params::FW_ACRO_YAW_EN>) _param_fw_acro_yaw_en,
 
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
 		(ParamFloat<px4::params::FW_AIRSPD_STALL>) _param_fw_airspd_stall,
 		(ParamFloat<px4::params::FW_AIRSPD_TRIM>) _param_fw_airspd_trim,
-		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
+		(ParamBool<px4::params::FW_USE_AIRSPD>) _param_fw_use_airspd,
 
 		(ParamInt<px4::params::FW_ARSP_SCALE_EN>) _param_fw_arsp_scale_en,
 
