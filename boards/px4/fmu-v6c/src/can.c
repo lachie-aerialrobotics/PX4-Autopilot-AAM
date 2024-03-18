@@ -46,11 +46,7 @@
 #include <arch/board/board.h>
 
 #include "chip.h"
-<<<<<<< HEAD
 #include "arm_internal.h"
-=======
-#include "arm_arch.h"
->>>>>>> upstream/stable
 
 #include "chip.h"
 #include "stm32_can.h"

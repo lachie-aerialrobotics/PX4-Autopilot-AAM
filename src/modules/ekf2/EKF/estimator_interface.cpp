@@ -630,7 +630,6 @@ bool EstimatorInterface::isHorizontalAidingActive() const
 	return getNumberOfActiveHorizontalAidingSources() > 0;
 }
 
-<<<<<<< HEAD
 bool EstimatorInterface::isOtherSourceOfVerticalPositionAidingThan(const bool aiding_flag) const
 {
 	const int nb_sources = getNumberOfActiveVerticalPositionAidingSources();
@@ -660,8 +659,6 @@ bool EstimatorInterface::isVerticalAidingActive() const
 	return isVerticalPositionAidingActive() || isVerticalVelocityAidingActive();
 }
 
-=======
->>>>>>> upstream/stable
 bool EstimatorInterface::isVerticalVelocityAidingActive() const
 {
 	return getNumberOfActiveVerticalVelocityAidingSources() > 0;

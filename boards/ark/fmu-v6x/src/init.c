@@ -34,11 +34,7 @@
 /**
  * @file init.c
  *
-<<<<<<< HEAD
  * ARKFMU-specific early startup code.  This file implements the
-=======
- * PX4FMU-specific early startup code.  This file implements the
->>>>>>> upstream/stable
  * board_app_initialize() function that is called early by nsh during startup.
  *
  * Code here is run before the rcS script is invoked; it should start required
@@ -50,20 +46,13 @@
  ****************************************************************************/
 
 #include "board_config.h"
-<<<<<<< HEAD
 #include "spix_sync.h"
-=======
->>>>>>> upstream/stable
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <debug.h>
 #include <errno.h>
-<<<<<<< HEAD
-=======
-#include <syslog.h>
->>>>>>> upstream/stable
 
 #include <nuttx/config.h>
 #include <nuttx/board.h>
@@ -82,10 +71,7 @@
 #include <systemlib/px4_macros.h>
 #include <px4_arch/io_timer.h>
 #include <px4_platform_common/init.h>
-<<<<<<< HEAD
 #include <px4_platform_common/px4_manifest.h>
-=======
->>>>>>> upstream/stable
 #include <px4_platform/gpio.h>
 #include <px4_platform/board_determine_hw_info.h>
 #include <px4_platform/board_dma_alloc.h>
@@ -124,10 +110,7 @@ __EXPORT void board_peripheral_reset(int ms)
 	VDD_5V_PERIPH_EN(false);
 	board_control_spi_sensors_power(false, 0xffff);
 	VDD_3V3_SENSORS4_EN(false);
-<<<<<<< HEAD
 	SPI6_RESET(true);
-=======
->>>>>>> upstream/stable
 
 	bool last = READ_VDD_3V3_SPEKTRUM_POWER_EN();
 	/* Keep Spektum on to discharge rail*/
@@ -146,11 +129,8 @@ __EXPORT void board_peripheral_reset(int ms)
 	VDD_5V_HIPOWER_EN(true);
 	VDD_5V_PERIPH_EN(true);
 
-<<<<<<< HEAD
 	/* Release SPI6 Reset */
 	SPI6_RESET(false);
-=======
->>>>>>> upstream/stable
 }
 
 /************************************************************************************
@@ -240,16 +220,12 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	VDD_3V3_SENSORS4_EN(true);
 	VDD_3V3_SPEKTRUM_POWER_EN(true);
 
-<<<<<<< HEAD
 	SPI6_RESET(false);
 
-=======
->>>>>>> upstream/stable
 	/* Need hrt running before using the ADC */
 
 	px4_platform_init();
 
-<<<<<<< HEAD
 	// Use the default HW_VER_REV(0x0,0x0) for Ramtron
 
 	stm32_spiinitialize();
@@ -257,8 +233,6 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 	/* Configure the HW based on the manifest */
 
 	px4_platform_configure();
-=======
->>>>>>> upstream/stable
 
 	if (OK == board_determine_hw_info()) {
 		syslog(LOG_INFO, "[boot] Rev 0x%1x : Ver 0x%1x %s\n", board_get_hw_revision(), board_get_hw_version(),
@@ -268,20 +242,13 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 		syslog(LOG_ERR, "[boot] Failed to read HW revision and version\n");
 	}
 
-<<<<<<< HEAD
 	/* Configure the Actual SPI interfaces (after we determined the HW version)  */
 
-=======
->>>>>>> upstream/stable
 	stm32_spiinitialize();
 
 	board_spi_reset(10, 0xffff);
 
-<<<<<<< HEAD
 	/* Configure the DMA allocator */
-=======
-	/* configure the DMA allocator */
->>>>>>> upstream/stable
 
 	if (board_dma_alloc_init() < 0) {
 		syslog(LOG_ERR, "[boot] DMA alloc FAILED\n");
@@ -313,23 +280,14 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 
 	if (ret != OK) {
 		led_on(LED_RED);
-<<<<<<< HEAD
 		return ret;
-=======
->>>>>>> upstream/stable
 	}
 
 #endif /* CONFIG_MMCSD */
 
-<<<<<<< HEAD
 	/* Configure the SPIX_SYNC output */
 	spix_sync_servo_init(BOARD_SPIX_SYNC_FREQ);
 	spix_sync_servo_set(0, 150);
-=======
-	/* Configure the HW based on the manifest */
-
-	px4_platform_configure();
->>>>>>> upstream/stable
 
 	return OK;
 }

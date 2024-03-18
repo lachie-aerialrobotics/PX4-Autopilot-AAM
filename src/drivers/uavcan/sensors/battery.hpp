@@ -95,7 +95,6 @@ private:
 	float _discharged_mah_loop = 0.f;
 	uint8_t _warning;
 	hrt_abstime _last_timestamp;
-<<<<<<< HEAD
 	battery_status_s _battery_status[battery_status_s::MAX_INSTANCES] {};
 	BatteryDataType _batt_update_mod[battery_status_s::MAX_INSTANCES] {};
 
@@ -114,8 +113,4 @@ private:
 	Battery battery4 = {BATTERY_INDEX_4, this, SAMPLE_INTERVAL_US, battery_status_s::BATTERY_SOURCE_EXTERNAL};
 
 	Battery *_battery[battery_status_s::MAX_INSTANCES] = { &battery1, &battery2, &battery3, &battery4 };
-=======
-	battery_status_s battery_status[battery_status_s::MAX_INSTANCES] {};
-	bool battery_aux_support[battery_status_s::MAX_INSTANCES] {false};
->>>>>>> upstream/stable
 };

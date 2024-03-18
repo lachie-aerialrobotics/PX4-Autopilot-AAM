@@ -44,20 +44,12 @@
 namespace math
 {
 
-<<<<<<< HEAD
 template <typename Type = float>
-=======
-template <typename Type, size_t N>
->>>>>>> upstream/stable
 class WelfordMean
 {
 public:
 	// For a new value, compute the new count, new mean, the new M2.
-<<<<<<< HEAD
 	bool update(const Type &new_value)
-=======
-	void update(const matrix::Vector<Type, N> &new_value)
->>>>>>> upstream/stable
 	{
 		if (_count == 0) {
 			reset();
@@ -78,7 +70,6 @@ public:
 		}
 
 		// mean accumulates the mean of the entire dataset
-<<<<<<< HEAD
 		// delta can be very small compared to the mean, use algorithm to minimise numerical error
 		const Type delta{new_value - _mean};
 		const Type mean_change = delta / _count;
@@ -98,17 +89,6 @@ public:
 		}
 
 		return valid();
-=======
-		const matrix::Vector<Type, N> delta{new_value - _mean};
-		_mean += delta / _count;
-
-		// M2 aggregates the squared distance from the mean
-		// count aggregates the number of samples seen so far
-		_M2 += delta.emult(new_value - _mean);
-
-		// protect against floating point precision causing negative variances
-		_M2 = matrix::max(_M2, {});
->>>>>>> upstream/stable
 	}
 
 	bool valid() const { return _count > 2; }
@@ -124,7 +104,6 @@ public:
 		_M2_accum = 0;
 	}
 
-<<<<<<< HEAD
 	Type mean() const { return _mean; }
 	Type variance() const { return _M2 / (_count - 1); }
 	Type standard_deviation() const { return std::sqrt(variance()); }
@@ -150,16 +129,6 @@ private:
 	Type _M2_accum{};    ///< kahan summation algorithm accumulator for M2
 
 	uint16_t _count{0};
-=======
-	// Retrieve the mean, variance and sample variance
-	matrix::Vector<Type, N> mean() const { return _mean; }
-	matrix::Vector<Type, N> variance() const { return _M2 / _count; }
-	matrix::Vector<Type, N> sample_variance() const { return _M2 / (_count - 1); }
-private:
-	matrix::Vector<Type, N> _mean{};
-	matrix::Vector<Type, N> _M2{};
-	unsigned _count{0};
->>>>>>> upstream/stable
 };
 
 } // namespace math

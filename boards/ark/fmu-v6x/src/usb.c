@@ -32,11 +32,7 @@
  ****************************************************************************/
 
 /**
-<<<<<<< HEAD
  * @file usb.c
-=======
- * @file px4fmu_usb.c
->>>>>>> upstream/stable
  *
  * Board-specific USB functions.
  */
@@ -55,11 +51,7 @@
 #include <nuttx/usb/usbdev.h>
 #include <nuttx/usb/usbdev_trace.h>
 
-<<<<<<< HEAD
 #include "arm_internal.h"
-=======
-#include <arm_arch.h>
->>>>>>> upstream/stable
 #include <chip.h>
 #include <stm32_gpio.h>
 #include <stm32_otg.h>
@@ -81,11 +73,7 @@
  * Name: stm32_usbinitialize
  *
  * Description:
-<<<<<<< HEAD
  *   Called to setup USB-related GPIO pins for the ARKFMU board.
-=======
- *   Called to setup USB-related GPIO pins for the PX4FMU board.
->>>>>>> upstream/stable
  *
  ************************************************************************************/
 

@@ -184,14 +184,7 @@
 #define GPIO_HW_VER_REV_DRIVE  /* PG0 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTG|GPIO_PIN0)
 #define GPIO_HW_REV_SENSE      /* PF5 */  ADC3_GPIO(15)
 #define GPIO_HW_VER_SENSE      /* PF4 */  ADC3_GPIO(14)
-<<<<<<< HEAD
 #define HW_INFO_INIT_PREFIX           "V5X"
-<<<<<<< HEAD
-=======
-#define HW_INFO_INIT           {'V','5','X','x', 'x',0}
-#define HW_INFO_INIT_VER       3 /* Offset in above string of the VER */
-#define HW_INFO_INIT_REV       4 /* Offset in above string of the REV */
->>>>>>> upstream/stable
 #define BOARD_NUM_SPI_CFG_HW_VERSIONS 7
 // Base                   FMUM
 #define V5X00   HW_VER_REV(0x0,0x0) // FMUV5X,                         Rev 0
@@ -210,17 +203,7 @@
 #define V5Xa0   HW_VER_REV(0xa,0x0) // NO USB (Q),                     Rev 0
 #define V5Xa1   HW_VER_REV(0xa,0x1) // NO USB (Q) I2C2 BMP388,         Rev 1
 #define V5Xa2   HW_VER_REV(0xa,0x2) // NO USB (Q) I2C2 BMP388,         Rev 2
-<<<<<<< HEAD
 #define V5X101   HW_VER_REV(0x10,0x1) // NO USB (Q) I2C2 BMP388,        Rev 1
-=======
->>>>>>> upstream/stable
-=======
-#define BOARD_NUM_SPI_CFG_HW_VERSIONS 3
-
-#define V5X_0     HW_FMUM_ID(0x0)   // FMUV5X, Auterion     FMUv5x RC13 (baro2 BMP388 on I2C4) Sensor Set Rev 0
-#define V5X_1     HW_FMUM_ID(0x1)   // FMUV5X, Auterion, HB FMUv5x RC15 (baro2 BMP388 on I2C2) Sensor Set Rev 1
-#define V5X_2     HW_FMUM_ID(0x2)   // FMUV5X, HB           FMUv5x                             Sensor Set Rev 2
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 
 #define UAVCAN_NUM_IFACES_RUNTIME 1
 

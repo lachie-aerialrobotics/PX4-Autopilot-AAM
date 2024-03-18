@@ -122,7 +122,6 @@ void Ekf::fuseOptFlow()
 
 	bool fused[2] {false, false};
 
-<<<<<<< HEAD
 	// fuse observation axes sequentially
 	for (uint8_t index = 0; index <= 1; index++) {
 		if (index == 0) {
@@ -154,33 +153,6 @@ void Ekf::fuseOptFlow()
 
 	_fault_status.flags.bad_optflow_X = !fused[0];
 	_fault_status.flags.bad_optflow_Y = !fused[1];
-=======
-	// run the innovation consistency check and record result
-	bool all_innovation_checks_passed = true;
-	float test_ratio[2];
-	test_ratio[0] = sq(_flow_innov(0)) / (sq(math::max(_params.flow_innov_gate, 1.0f)) * _flow_innov_var(0));
-	test_ratio[1] = sq(_flow_innov(1)) / (sq(math::max(_params.flow_innov_gate, 1.0f)) * _flow_innov_var(1));
-	_optflow_test_ratio = math::max(test_ratio[0], test_ratio[1]);
-
-	for (uint8_t obs_index = 0; obs_index <= 1; obs_index++) {
-		const bool innov_check_fail = (test_ratio[obs_index] > 1.0f);
-
-		if (innov_check_fail) {
-			all_innovation_checks_passed = false;
-		}
-
-		if (obs_index == 0) {
-			_innov_check_fail_status.flags.reject_optflow_X = innov_check_fail;
-
-		} else {
-			_innov_check_fail_status.flags.reject_optflow_Y = innov_check_fail;
-		}
-	}
-
-	// if either axis fails we abort the fusion
-	if (!all_innovation_checks_passed) {
-		return;
->>>>>>> upstream/stable
 
 	if (fused[0] && fused[1]) {
 		_aid_src_optical_flow.time_last_fuse = _time_delayed_us;

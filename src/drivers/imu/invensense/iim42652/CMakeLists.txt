@@ -35,10 +35,7 @@ px4_add_module(
 	MAIN iim42652
 	COMPILE_FLAGS
 		${MAX_CUSTOM_OPT_LEVEL}
-<<<<<<< HEAD
 		#-DDEBUG_BUILD
-=======
->>>>>>> upstream/stable
 	SRCS
 		iim42652_main.cpp
 		IIM42652.cpp

@@ -546,16 +546,9 @@ void UavcanGnssBridge::handleInjectDataTopic()
 
 bool UavcanGnssBridge::PublishRTCMStream(const uint8_t *const data, const size_t data_len)
 {
-<<<<<<< HEAD
 	uavcan::equipment::gnss::RTCMStream msg;
 
 	msg.protocol_id = uavcan::equipment::gnss::RTCMStream::PROTOCOL_ID_RTCM3;
-=======
-	using uavcan::equipment::gnss::RTCMStream;
-
-	RTCMStream msg;
-	msg.protocol_id = RTCMStream::PROTOCOL_ID_RTCM3;
->>>>>>> upstream/stable
 
 	const size_t capacity = msg.data.capacity();
 	size_t written = 0;

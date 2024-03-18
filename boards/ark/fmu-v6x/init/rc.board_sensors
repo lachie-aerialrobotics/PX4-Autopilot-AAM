@@ -1,6 +1,5 @@
 #!/bin/sh
 #
-<<<<<<< HEAD
 # ARK FMUARKV6X specific board sensors init
 #------------------------------------------------------------------------------
 set HAVE_PM2 yes
@@ -18,11 +17,6 @@ then
 else
 	board_adc start
 fi
-=======
-# PX4 FMUv6X specific board sensors init
-#------------------------------------------------------------------------------
-board_adc start
->>>>>>> upstream/stable
 
 if param compare SENS_EN_INA226 1
 then

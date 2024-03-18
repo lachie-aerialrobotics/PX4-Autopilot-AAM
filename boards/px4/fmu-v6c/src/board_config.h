@@ -139,13 +139,7 @@
 #define GPIO_HW_VER_REV_DRIVE  /* PE12 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTE|GPIO_PIN12)
 #define GPIO_HW_REV_SENSE      /* PC0 */  GPIO_ADC123_INP10
 #define GPIO_HW_VER_SENSE      /* PC1 */  GPIO_ADC123_INP11
-<<<<<<< HEAD
 #define HW_INFO_INIT_PREFIX    "V6C"
-=======
-#define HW_INFO_INIT           {'V','6','C','x', 'x',0}
-#define HW_INFO_INIT_VER       3 /* Offset in above string of the VER */
-#define HW_INFO_INIT_REV       4 /* Offset in above string of the REV */
->>>>>>> upstream/stable
 
 #define BOARD_NUM_SPI_CFG_HW_VERSIONS 5 // Rev 0, 10 and Mini Sensor sets
 //                 Base/FMUM
@@ -222,19 +216,11 @@
 /* SD card bringup does not work if performed on the IDLE thread because it
  * will cause waiting.  Use either:
  *
-<<<<<<< HEAD
  *  CONFIG_BOARDCTL=y, OR
  *  CONFIG_BOARD_INITIALIZE=y && CONFIG_BOARD_INITTHREAD=y
  */
 
 #if defined(CONFIG_BOARD_INITIALIZE) && !defined(CONFIG_BOARDCTL) && \
-=======
- *  CONFIG_LIB_BOARDCTL=y, OR
- *  CONFIG_BOARD_INITIALIZE=y && CONFIG_BOARD_INITTHREAD=y
- */
-
-#if defined(CONFIG_BOARD_INITIALIZE) && !defined(CONFIG_LIB_BOARDCTL) && \
->>>>>>> upstream/stable
    !defined(CONFIG_BOARD_INITTHREAD)
 #  warning SDIO initialization cannot be perfomed on the IDLE thread
 #endif

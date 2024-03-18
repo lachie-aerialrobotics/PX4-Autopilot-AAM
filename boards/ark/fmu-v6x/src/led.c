@@ -32,15 +32,9 @@
  ****************************************************************************/
 
 /**
-<<<<<<< HEAD
  * @file led.c
  *
  * ARKFMU LED backend.
-=======
- * @file px4fmu2_led.c
- *
- * PX4FMU LED backend.
->>>>>>> upstream/stable
  */
 
 #include <px4_platform_common/px4_config.h>

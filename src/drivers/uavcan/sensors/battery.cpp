@@ -96,7 +96,6 @@ UavcanBatteryBridge::battery_sub_cb(const uavcan::ReceivedDataStructure<uavcan::
 		return;
 	}
 
-<<<<<<< HEAD
 	if (_batt_update_mod[instance] == BatteryDataType::Filter) {
 
 		filterData(msg, instance);
@@ -132,37 +131,6 @@ UavcanBatteryBridge::battery_sub_cb(const uavcan::ReceivedDataStructure<uavcan::
 	_battery_status[instance].id = msg.getSrcNodeID().get();
 
 	if (_batt_update_mod[instance] == BatteryDataType::Raw) {
-=======
-	battery_status[instance].timestamp = hrt_absolute_time();
-	battery_status[instance].voltage_v = msg.voltage;
-	battery_status[instance].voltage_filtered_v = msg.voltage;
-	battery_status[instance].current_a = msg.current;
-	battery_status[instance].current_filtered_a = msg.current;
-	battery_status[instance].current_average_a = msg.current;
-
-	if (battery_aux_support[instance] == false) {
-		sumDischarged(battery_status[instance].timestamp, battery_status[instance].current_a);
-		battery_status[instance].discharged_mah = _discharged_mah;
-	}
-
-	battery_status[instance].remaining = msg.state_of_charge_pct / 100.0f; // between 0 and 1
-	// battery_status[instance].scale = msg.; // Power scaling factor, >= 1, or -1 if unknown
-	battery_status[instance].temperature = msg.temperature + CONSTANTS_ABSOLUTE_NULL_CELSIUS; // Kelvin to Celcius
-	// battery_status[instance].cell_count = msg.;
-	battery_status[instance].connected = true;
-	battery_status[instance].source = msg.status_flags & uavcan::equipment::power::BatteryInfo::STATUS_FLAG_IN_USE;
-	// battery_status[instance].priority = msg.;
-	battery_status[instance].capacity = msg.full_charge_capacity_wh;
-	battery_status[instance].full_charge_capacity_wh = msg.full_charge_capacity_wh;
-	battery_status[instance].remaining_capacity_wh = msg.remaining_capacity_wh;
-	// battery_status[instance].cycle_count = msg.;
-	battery_status[instance].time_remaining_s = NAN;
-	// battery_status[instance].average_time_to_empty = msg.;
-	battery_status[instance].serial_number = msg.model_instance_id;
-	battery_status[instance].id = msg.getSrcNodeID().get();
-
-	if (battery_aux_support[instance] == false) {
->>>>>>> upstream/stable
 		// Mavlink 2 needs individual cell voltages or cell[0] if cell voltages are not available.
 		_battery_status[instance].voltage_cell_v[0] = msg.voltage;
 

@@ -217,10 +217,7 @@ private:
 
 	px4::atomic_bool	_exit_thread{false};
 	bool			_need_reliable_transfer{false};
-<<<<<<< HEAD
 	px4::atomic_bool	_want_fsync{false};
-=======
->>>>>>> upstream/stable
 	pthread_mutex_t		_mtx;
 	pthread_cond_t		_cv;
 	pthread_t _thread = 0;

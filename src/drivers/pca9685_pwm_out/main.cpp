@@ -176,15 +176,11 @@ void PCA9685Wrapper::Run()
 		return;
 	}
 
-<<<<<<< HEAD
 	SmartLock lock_guard(_lock);
 
 	perf_begin(_cycle_perf);
 
 	switch (_state) {
-=======
-	switch (state) {
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 	case STATE::INIT:
 		updateParams();
 		pca9685->updateFreq(param_pwm_freq);

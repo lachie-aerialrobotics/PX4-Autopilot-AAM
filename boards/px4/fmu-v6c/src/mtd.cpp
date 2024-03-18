@@ -59,25 +59,17 @@ static const px4_mtd_entry_t fmum_fram = {
 
 static const px4_mtd_entry_t imu_eeprom = {
 	.device = &i2c4,
-<<<<<<< HEAD
 	.npart = 3,
-=======
-	.npart = 2,
->>>>>>> upstream/stable
 	.partd = {
 		{
 			.type = MTD_CALDATA,
 			.path = "/fs/mtd_caldata",
-<<<<<<< HEAD
 			.nblocks = 240
 		},
 		{
 			.type = MTD_MFT_REV,
 			.path = "/fs/mtd_mft_rev",
 			.nblocks = 8
-=======
-			.nblocks = 248
->>>>>>> upstream/stable
 		},
 		{
 			.type = MTD_ID,
@@ -102,13 +94,9 @@ static const px4_mft_entry_s mtd_mft = {
 
 static const px4_mft_s mft = {
 	.nmft = 1,
-<<<<<<< HEAD
 	.mfts = {
 		&mtd_mft
 	}
-=======
-	.mfts = &mtd_mft
->>>>>>> upstream/stable
 };
 
 const px4_mft_s *board_get_manifest(void)

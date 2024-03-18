@@ -71,39 +71,39 @@ if(gazebo_FOUND)
 	)
 
 	set(models
-		# advanced_plane
-		# believer
-		# boat
-		# cloudship
-		# glider
+		advanced_plane
+		believer
+		boat
+		cloudship
+		glider
 		iris
-		# iris_dual_gps
-		# iris_foggy_lidar
-		# iris_irlock
-		# iris_obs_avoid
-		# iris_depth_camera
-		# iris_downward_depth_camera
-		# iris_opt_flow
-		# iris_opt_flow_mockup
-		# iris_rplidar
-		# iris_vision
-		# omnicopter
-		# plane
-		# plane_cam
-		# plane_catapult
-		# plane_lidar
-		# px4vision
-		# quadtailsitter
-		# r1_rover
-		# rover
-		# standard_vtol
-		# standard_vtol_drop
-		# tailsitter
-		# techpod
-		# tiltrotor
-		# typhoon_h480
-		# uuv_bluerov2_heavy
-		# uuv_hippocampus
+		iris_dual_gps
+		iris_foggy_lidar
+		iris_irlock
+		iris_obs_avoid
+		iris_depth_camera
+		iris_downward_depth_camera
+		iris_opt_flow
+		iris_opt_flow_mockup
+		iris_rplidar
+		iris_vision
+		omnicopter
+		plane
+		plane_cam
+		plane_catapult
+		plane_lidar
+		px4vision
+		quadtailsitter
+		r1_rover
+		rover
+		standard_vtol
+		standard_vtol_drop
+		tailsitter
+		techpod
+		tiltrotor
+		typhoon_h480
+		uuv_bluerov2_heavy
+		uuv_hippocampus
 		hex
 		hex_delta
 		hex_stewart

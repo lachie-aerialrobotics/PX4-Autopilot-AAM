@@ -123,7 +123,6 @@ private:
 	hrt_abstime _gyro_timestamp_sample_last{0};
 	hrt_abstime _gyro_timestamp_last{0};
 
-<<<<<<< HEAD
 	math::WelfordMeanVector<float, 3> _raw_accel_mean{};
 	math::WelfordMeanVector<float, 3> _raw_gyro_mean{};
 
@@ -132,15 +131,6 @@ private:
 
 	math::WelfordMean<float> _gyro_mean_interval_us{};
 	math::WelfordMean<float> _gyro_fifo_mean_interval_us{};
-=======
-	math::WelfordMean<float, 3> _raw_accel_mean{};
-	math::WelfordMean<float, 3> _raw_gyro_mean{};
-
-	math::WelfordMean<float, 2> _accel_interval_mean{};
-	math::WelfordMean<float, 2> _gyro_interval_mean{};
-
-	math::WelfordMean<float, 2> _gyro_update_latency_mean{};
->>>>>>> upstream/stable
 
 	math::WelfordMean<float> _gyro_update_latency_mean_us{};
 	math::WelfordMean<float> _gyro_publish_latency_mean_us{};
