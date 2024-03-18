@@ -32,7 +32,6 @@
 ############################################################################
 
 px4_add_romfs_files(
-<<<<<<< HEAD
 	# [0-999] Reserved (historical)"
 
 	# [1000, 1999] Simulation setups"
@@ -61,7 +60,7 @@ px4_add_romfs_files(
 	4020_holybro_px4vision_v1_5
 	# 4030_3dr_solo
 	# 4031_3dr_quad
-	4040_reaper
+	# 4040_reaper
 	4041_beta75x
 	4050_generic_250
 	4052_holybro_qav250
@@ -70,7 +69,7 @@ px4_add_romfs_files(
 	4071_ifo
 	4073_ifo-s
 	4500_clover4
-	4900_crazyflie
+	# 4900_crazyflie
 	4901_crazyflie21
 
 	# [5000, 5999] Quadrotor +"
@@ -111,9 +110,6 @@ px4_add_romfs_files(
 	# [17000, 17999] Autogyro
 	17002_TF-AutoG2
 	17003_TF-G2
-=======
-	# [0-999] Reserved (historical)
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 
 	# [18000, 18999] High-altitude balloons
 	18001_TF-B1
