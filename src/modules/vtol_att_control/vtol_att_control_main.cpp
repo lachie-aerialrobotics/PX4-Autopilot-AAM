@@ -94,12 +94,22 @@ VtolAttitudeControl::~VtolAttitudeControl()
 bool
 VtolAttitudeControl::init()
 {
-	if (!_actuator_inputs_mc.registerCallback()) {
+	if (!_vehicle_torque_setpoint_virtual_fw_sub.registerCallback()) {
 		PX4_ERR("callback registration failed");
 		return false;
 	}
 
-	if (!_actuator_inputs_fw.registerCallback()) {
+	if (!_vehicle_torque_setpoint_virtual_mc_sub.registerCallback()) {
+		PX4_ERR("callback registration failed");
+		return false;
+	}
+
+	if (!_vehicle_thrust_setpoint_virtual_fw_sub.registerCallback()) {
+		PX4_ERR("callback registration failed");
+		return false;
+	}
+
+	if (!_vehicle_thrust_setpoint_virtual_mc_sub.registerCallback()) {
 		PX4_ERR("callback registration failed");
 		return false;
 	}
@@ -196,45 +206,41 @@ void
 VtolAttitudeControl::quadchute(QuadchuteReason reason)
 {
 	if (!_vtol_vehicle_status.fixed_wing_system_failure) {
+		// only publish generic warning through mavlink to safe flash
+		mavlink_log_critical(&_mavlink_log_pub, "Quad-chute triggered\t");
+
 		switch (reason) {
 		case QuadchuteReason::TransitionTimeout:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: transition timeout\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_tout"), events::Log::Critical,
 				     "Quad-chute triggered due to transition timeout");
 			break;
 
 		case QuadchuteReason::ExternalCommand:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: external command\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_ext_cmd"), events::Log::Critical,
 				     "Quad-chute triggered due to external command");
 			break;
 
 		case QuadchuteReason::MinimumAltBreached:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: minimum altitude breached\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_min_alt"), events::Log::Critical,
 				     "Quad-chute triggered due to minimum altitude breach");
 			break;
 
 		case QuadchuteReason::UncommandedDescent:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: Uncommanded descent detected\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_alt_loss"), events::Log::Critical,
 				     "Quad-chute triggered due to uncommanded descent detection");
 			break;
 
 		case QuadchuteReason::TransitionAltitudeLoss:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: loss of altitude during transition\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_trans_alt_err"), events::Log::Critical,
 				     "Quad-chute triggered due to loss of altitude during transition");
 			break;
 
 		case QuadchuteReason::MaximumPitchExceeded:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: maximum pitch exceeded\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_max_pitch"), events::Log::Critical,
 				     "Quad-chute triggered due to maximum pitch angle exceeded");
 			break;
 
 		case QuadchuteReason::MaximumRollExceeded:
-			mavlink_log_critical(&_mavlink_log_pub, "Quadchute: maximum roll exceeded\t");
 			events::send(events::ID("vtol_att_ctrl_quadchute_max_roll"), events::Log::Critical,
 				     "Quad-chute triggered due to maximum roll angle exceeded");
 			break;
@@ -270,8 +276,10 @@ void
 VtolAttitudeControl::Run()
 {
 	if (should_exit()) {
-		_actuator_inputs_fw.unregisterCallback();
-		_actuator_inputs_mc.unregisterCallback();
+		_vehicle_torque_setpoint_virtual_fw_sub.unregisterCallback();
+		_vehicle_torque_setpoint_virtual_mc_sub.unregisterCallback();
+		_vehicle_thrust_setpoint_virtual_fw_sub.unregisterCallback();
+		_vehicle_thrust_setpoint_virtual_mc_sub.unregisterCallback();
 		exit_and_cleanup();
 		return;
 	}
@@ -305,8 +313,10 @@ VtolAttitudeControl::Run()
 
 	perf_begin(_loop_perf);
 
-	const bool updated_fw_in = _actuator_inputs_fw.update(&_actuators_fw_in);
-	const bool updated_mc_in = _actuator_inputs_mc.update(&_actuators_mc_in);
+	bool updated_fw_in = _vehicle_torque_setpoint_virtual_fw_sub.update(&_vehicle_torque_setpoint_virtual_fw);
+	updated_fw_in |= _vehicle_thrust_setpoint_virtual_fw_sub.update(&_vehicle_thrust_setpoint_virtual_fw);
+	bool updated_mc_in = _vehicle_torque_setpoint_virtual_mc_sub.update(&_vehicle_torque_setpoint_virtual_mc);
+	updated_mc_in |= _vehicle_thrust_setpoint_virtual_mc_sub.update(&_vehicle_thrust_setpoint_virtual_mc);
 
 	// run on actuator publications corresponding to VTOL mode
 	bool should_run = false;
@@ -358,6 +368,8 @@ VtolAttitudeControl::Run()
 		if (_vehicle_air_data_sub.update(&air_data)) {
 			_air_density = air_data.rho;
 		}
+
+		_vtol_type->handleEkfResets();
 
 		// check if mc and fw sp were updated
 		const bool mc_att_sp_updated = _mc_virtual_att_sp_sub.update(&_mc_virtual_att_sp);
@@ -414,8 +426,6 @@ VtolAttitudeControl::Run()
 		}
 
 		_vtol_type->fill_actuator_outputs();
-		_actuator_controls_0_pub.publish(_actuators_out_0);
-		_actuator_controls_1_pub.publish(_actuators_out_1);
 
 		_vehicle_torque_setpoint0_pub.publish(_torque_setpoint_0);
 		_vehicle_torque_setpoint1_pub.publish(_torque_setpoint_1);

@@ -88,8 +88,11 @@ public:
 	 * @brief Initialize filter
 	 *
 	 * @param[in] equivalent_airspeed is the equivalent airspeed in [m/s].
+	 * @param[in] equivalent_airspeed_trim is the equivalent airspeed trim (vehicle setting) in [m/s].
+	 * @param[in] airspeed_sensor_available boolean if the airspeed sensor is available.
 	 */
-	void initialize(float equivalent_airspeed);
+	void initialize(float equivalent_airspeed, const float equivalent_airspeed_trim,
+			const bool airspeed_sensor_available);
 
 	/**
 	 * @brief Update filter
@@ -113,7 +116,7 @@ private:
 	AirspeedFilterState _airspeed_state{.speed = 0.0f, .speed_rate = 0.0f};	///< Complimentary filter state
 };
 
-class TECSReferenceModel
+class TECSAltitudeReferenceModel
 {
 public:
 	/**
@@ -139,8 +142,8 @@ public:
 	};
 
 public:
-	TECSReferenceModel() = default;
-	~TECSReferenceModel() = default;
+	TECSAltitudeReferenceModel() = default;
+	~TECSAltitudeReferenceModel() = default;
 
 	/**
 	 * @brief Initialize reference models.
@@ -155,9 +158,10 @@ public:
 	 * @param[in] dt is the update interval in [s].
 	 * @param[in] setpoint are the desired setpoints.
 	 * @param[in] altitude is the altitude amsl in [m].
+	 * @param[in] height_rate is the height rate setpoint in [m/s].
 	 * @param[in] param are the reference model parameters.
 	 */
-	void update(float dt, const AltitudeReferenceState &setpoint, float altitude, const Param &param);
+	void update(float dt, const AltitudeReferenceState &setpoint, float altitude, float height_rate, const Param &param);
 
 	/**
 	 * @brief Get the current altitude reference of altitude reference model.
@@ -167,17 +171,20 @@ public:
 	AltitudeReferenceState getAltitudeReference() const;
 
 	/**
-	 * @brief Get the altitude rate reference of the altitude rate reference model.
+	 * @brief Get the Height Rate Setpoint directly from the velocity trajector generator
 	 *
-	 * @return Current altitude rate reference point.
+	 * @return float direct height rate setpoint [m/s]
 	 */
-	float getAltitudeRateReference() const;
+	float getHeightRateSetpointDirect() const {return _height_rate_setpoint_direct; }
+
 
 private:
 	// State
 	VelocitySmoothing
 	_alt_control_traj_generator;		///< Generates altitude rate and altitude setpoint trajectory when altitude is commanded.
-	float _alt_rate_ref; 			///< Altitude rate reference in [m/s].
+	ManualVelocitySmoothingZ
+	_velocity_control_traj_generator;	///< generates height rate trajectory when height rate is commanded
+	float _height_rate_setpoint_direct{NAN}; ///< generated direct height rate setpoint
 };
 
 class TECSControl
@@ -194,10 +201,10 @@ public:
 		float max_climb_rate;			///< Climb rate produced by max allowed throttle [m/s].
 		float vert_accel_limit;			///< Magnitude of the maximum vertical acceleration allowed [m/s²].
 		float equivalent_airspeed_trim;		///< Equivalent cruise airspeed for airspeed less mode [m/s].
-		float tas_min;				///< True airpeed demand lower limit [m/s].
+		float tas_min;				///< True airspeed demand lower limit [m/s].
 		float pitch_max;			///< Maximum pitch angle allowed in [rad].
 		float pitch_min;			///< Minimal pitch angle allowed in [rad].
-		float throttle_trim;			///< Normalized throttle required to fly level at given eas.
+		float throttle_trim;		///< Normalized throttle required to fly level at calibrated airspeed setpoint [0,1]
 		float throttle_max;			///< Normalized throttle upper limit.
 		float throttle_min;			///< Normalized throttle lower limit.
 
@@ -248,8 +255,8 @@ public:
 	 *
 	 */
 	struct Setpoint {
-		TECSReferenceModel::AltitudeReferenceState altitude_reference;	///< Altitude reference from reference model.
-		float altitude_rate_setpoint;					///< Altitude rate setpoint.
+		TECSAltitudeReferenceModel::AltitudeReferenceState altitude_reference;	///< Altitude/height rate reference.
+		float altitude_rate_setpoint_direct;					///< Direct height rate setpoint.
 		float tas_setpoint;						///< True airspeed setpoint.
 	};
 
@@ -313,12 +320,6 @@ public:
 	 * @return THe commanded pitch angle in [rad].
 	 */
 	float getPitchSetpoint() const {return _pitch_setpoint;};
-	/**
-	 * @brief Get specific total energy rate.
-	 *
-	 * @return the total specific energy rate in [m²/s³].
-	 */
-	float getSteRate() const {return _ste_rate;};
 	/**
 	 * @brief Get the Debug Output
 	 *
@@ -535,25 +536,18 @@ private:
 	float _pitch_setpoint{0.0f};				///< Controlled pitch setpoint [rad].
 	float _throttle_setpoint{0.0f};				///< Controlled throttle setpoint [0,1].
 	float _ratio_undersped{0.0f};				///< A continuous representation of how "undersped" the TAS is [0,1]
-	float _ste_rate{0.0f};					///< Specific total energy rate [m²/s³].
 };
 
 class TECS
 {
 public:
-	enum ECL_TECS_MODE {
-		ECL_TECS_MODE_NORMAL = 0,
-		ECL_TECS_MODE_UNDERSPEED
-	};
-
 	struct DebugOutput {
 		TECSControl::DebugOutput control;
 		float true_airspeed_filtered;
 		float true_airspeed_derivative;
-		float altitude_sp_ref;
-		float altitude_rate_alt_ref;
-		float altitude_rate_feedforward;
-		enum ECL_TECS_MODE tecs_mode;
+		float altitude_reference;
+		float height_rate_reference;
+		float height_rate_direct;
 	};
 public:
 	TECS() = default;
@@ -585,14 +579,8 @@ public:
 	 */
 	void update(float pitch, float altitude, float hgt_setpoint, float EAS_setpoint, float equivalent_airspeed,
 		    float eas_to_tas, float throttle_min, float throttle_setpoint_max,
-		    float throttle_trim, float pitch_limit_min, float pitch_limit_max, float target_climbrate, float target_sinkrate,
-		    float speed_deriv_forward, float hgt_rate, float hgt_rate_sp = NAN);
-
-	/**
-	 * @brief Initialize the control loop
-	 *
-	 */
-	void initialize(float altitude, float altitude_rate, float equivalent_airspeed, float eas_to_tas);
+		    float throttle_trim, float pitch_limit_min, float pitch_limit_max, float target_climbrate,
+		    float target_sinkrate, float speed_deriv_forward, float hgt_rate, float hgt_rate_sp = NAN);
 
 	void resetIntegrals()
 	{
@@ -616,7 +604,6 @@ public:
 	void set_altitude_rate_ff(float altitude_rate_ff) { _control_param.altitude_setpoint_gain_ff = altitude_rate_ff; };
 	void set_altitude_error_time_constant(float time_const) { _control_param.altitude_error_gain = 1.0f / math::max(time_const, 0.1f);; };
 
-	void set_equivalent_airspeed_max(float airspeed) { _equivalent_airspeed_max = airspeed; }
 	void set_equivalent_airspeed_min(float airspeed) { _equivalent_airspeed_min = airspeed; }
 	void set_equivalent_airspeed_trim(float airspeed) { _control_param.equivalent_airspeed_trim = airspeed; _airspeed_filter_param.equivalent_airspeed_trim = airspeed; }
 
@@ -644,30 +631,41 @@ public:
 	 */
 	void handle_alt_step(float altitude, float altitude_rate)
 	{
-		TECSReferenceModel::AltitudeReferenceState init_state{ .alt = altitude,
+		TECSAltitudeReferenceModel::AltitudeReferenceState init_state{ .alt = altitude,
 				.alt_rate = altitude_rate};
 
 		// reset altitude reference model.
-		_reference_model.initialize(init_state);
+		_altitude_reference_model.initialize(init_state);
 	}
 
 	float get_pitch_setpoint() {return _control.getPitchSetpoint();}
 	float get_throttle_setpoint() {return _control.getThrottleSetpoint();}
 
 	uint64_t timestamp() { return _update_timestamp; }
-	ECL_TECS_MODE tecs_mode() { return _tecs_mode; }
+	float get_underspeed_ratio() { return _control.getRatioUndersped(); }
 
 private:
-	TECSControl 		_control;				///< Control submodule.
-	TECSAirspeedFilter 	_airspeed_filter;			///< Airspeed filter submodule.
-	TECSReferenceModel 	_reference_model;			///< Setpoint reference model submodule.
+	/**
+	 * @brief Initialize the control parameters
+	 *
+	 */
+	void initControlParams(float target_climbrate, float target_sinkrate, float eas_to_tas, float pitch_limit_max,
+			       float pitch_limit_min, float throttle_min, float throttle_setpoint_max, float throttle_trim);
 
-	enum ECL_TECS_MODE _tecs_mode {ECL_TECS_MODE_NORMAL};		///< Current activated mode.
+	/**
+	 * @brief Initialize the control loop
+	 *
+	 */
+	void initialize(const float altitude, const float altitude_rate, const float equivalent_airspeed,
+			float eas_to_tas);
+
+	TECSControl 			_control;			///< Control submodule.
+	TECSAirspeedFilter 		_airspeed_filter;		///< Airspeed filter submodule.
+	TECSAltitudeReferenceModel 	_altitude_reference_model;	///< Setpoint reference model submodule.
 
 	hrt_abstime _update_timestamp{0};				///< last timestamp of the update function call.
 
 	float _equivalent_airspeed_min{3.0f};				///< equivalent airspeed demand lower limit (m/sec)
-	float _equivalent_airspeed_max{30.0f};				///< equivalent airspeed demand upper limit (m/sec)
 
 	static constexpr float DT_MIN = 0.001f;				///< minimum allowed value of _dt (sec)
 	static constexpr float DT_MAX = 1.0f;				///< max value of _dt allowed before a filter state reset is performed (sec)
@@ -683,7 +681,7 @@ private:
 		.airspeed_rate_noise_std_dev = 0.02f
 	};
 	/// Reference model parameters.
-	TECSReferenceModel::Param _reference_param{
+	TECSAltitudeReferenceModel::Param _reference_param{
 		.target_climbrate = 2.0f,
 		.target_sinkrate = 2.0f,
 		.jerk_max = 1000.0f,
@@ -698,9 +696,9 @@ private:
 		.max_climb_rate = 5.0f,
 		.vert_accel_limit = 0.0f,
 		.equivalent_airspeed_trim = 15.0f,
-		.tas_min = 3.0f,
-		.pitch_max = 5.0f,
-		.pitch_min = -5.0f,
+		.tas_min = 10.0f,
+		.pitch_max = 0.5f,
+		.pitch_min = -0.5f,
 		.throttle_trim = 0.0f,
 		.throttle_max = 1.0f,
 		.throttle_min = 0.1f,
@@ -724,10 +722,5 @@ private:
 		.airspeed_enabled = false,
 		.detect_underspeed_enabled = false,
 	};
-
-	/**
-	 * Update the desired airspeed
-	 */
-	float _update_speed_setpoint(const float tas_min, const float tas_max, const float tas_setpoint, const float tas);
 };
 

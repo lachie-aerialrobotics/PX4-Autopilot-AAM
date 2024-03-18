@@ -81,12 +81,12 @@ param set-default MC_ROLLRATE_K 1.000
 param set-default MC_ROLLRATE_I 0.1
 param set-default MC_ROLLRATE_D 0.0004
 
-param set-default MC_YAWRATE_K 2.0
-param set-default MC_YAWRATE_I 0.2
+param set-default MC_YAWRATE_K 1.3
+param set-default MC_YAWRATE_I 0.1
 
 param set-default MC_PITCH_P 4.5
 param set-default MC_ROLL_P 4.5
-param set-default MC_YAW_P 5
+param set-default MC_YAW_P 3.0
 
 param set-default MPC_XY_VEL_P_ACC 2.2
 param set-default MPC_XY_VEL_I_ACC 0.1
@@ -108,7 +108,7 @@ param set-default IMU_DGYRO_CUTOFF 40
 
 param set-default MC_AIRMODE 1
 
-param set-default MPC_THR_HOVER 30.0
+param set-default MPC_THR_HOVER 50.0
 
 # set MIXER hexa_cox
 

@@ -186,6 +186,18 @@ PARAM_DEFINE_INT32(UAVCAN_LGT_NAV, 3);
 PARAM_DEFINE_INT32(UAVCAN_LGT_LAND, 0);
 
 /**
+ * publish Arming Status stream
+ *
+ * Enable UAVCAN Arming Status stream publication
+ *  uavcan::equipment::safety::ArmingStatus
+ *
+ * @boolean
+ * @reboot_required true
+ * @group UAVCAN
+ */
+PARAM_DEFINE_INT32(UAVCAN_PUB_ARM, 0);
+
+/**
  * publish RTCM stream
  *
  * Enable UAVCAN RTCM stream publication
@@ -293,6 +305,18 @@ PARAM_DEFINE_INT32(UAVCAN_SUB_FLOW, 0);
  * @group UAVCAN
  */
 PARAM_DEFINE_INT32(UAVCAN_SUB_GPS, 1);
+
+/**
+ * subscription GPS Relative
+ *
+ * Enable UAVCAN GPS Relative subscription.
+ * ardupilot::gnss::RelPosHeading
+ *
+ * @boolean
+ * @reboot_required true
+ * @group UAVCAN
+ */
+PARAM_DEFINE_INT32(UAVCAN_SUB_GPS_R, 1);
 
 /**
  * subscription hygrometer

@@ -142,6 +142,8 @@ px4_add_module(
 		${LIBUAVCAN_DIR}/libuavcan_drivers/posix/include
 		${LIBUAVCAN_DIR_DRIVERS}/${UAVCAN_DRIVER}/driver/include
 	SRCS
+		arming_status.cpp
+		arming_status.hpp
 		beep.cpp
 		beep.hpp
 		rgbled.cpp
@@ -165,6 +167,7 @@ px4_add_module(
 		sensors/battery.cpp
 		sensors/airspeed.cpp
 		sensors/flow.cpp
+		sensors/gnss_relative.cpp
 		sensors/gnss.cpp
 		sensors/mag.cpp
 		sensors/rangefinder.cpp

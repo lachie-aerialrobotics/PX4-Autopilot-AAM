@@ -35,7 +35,7 @@
 
 #include <uORB/Subscription.hpp>
 
-#include <lib/geo/geo.h>
+#include <lib/atmosphere/atmosphere.h>
 #include <lib/mathlib/mathlib.h>
 
 #include <px4_platform_common/getopt.h>
@@ -95,6 +95,12 @@ int GZBridge::init()
 				model_pose_v.push_back(0.0);
 			}
 
+			// If model position z is less equal than 0, move above floor to prevent floor glitching
+			if (model_pose_v[2] <= 0.0) {
+				PX4_INFO("Model position z is less or equal 0.0, moving upwards");
+				model_pose_v[2] = 0.5;
+			}
+
 			gz::msgs::Pose *p = req.mutable_pose();
 			gz::msgs::Vector3d *position = p->mutable_position();
 			position->set_x(model_pose_v[0]);
@@ -116,15 +122,44 @@ int GZBridge::init()
 		bool result;
 		std::string create_service = "/world/" + _world_name + "/create";
 
-		if (_node.Request(create_service, req, 1000, rep, result)) {
-			if (!rep.data() || !result) {
-				PX4_ERR("EntityFactory service call failed");
+		bool gz_called = false;
+		// Check if PX4_GZ_STANDALONE has been set.
+		char *standalone_val = std::getenv("PX4_GZ_STANDALONE");
+
+		if ((standalone_val != nullptr) && (std::strcmp(standalone_val, "1") == 0)) {
+			// Check if Gazebo has been called and if not attempt to reconnect.
+			while (gz_called == false) {
+				if (_node.Request(create_service, req, 1000, rep, result)) {
+					if (!rep.data() || !result) {
+						PX4_ERR("EntityFactory service call failed");
+						return PX4_ERROR;
+
+					} else {
+						gz_called = true;
+					}
+				}
+
+				// If Gazebo has not been called, wait 2 seconds and try again.
+				else {
+					PX4_WARN("Service call timed out as Gazebo has not been detected.");
+					system_usleep(2000000);
+				}
+			}
+		}
+
+
+		// If PX4_GZ_STANDALONE has been set, you can try to connect but GZ_SIM_RESOURCE_PATH needs to be set correctly to work.
+		else {
+			if (_node.Request(create_service, req, 1000, rep, result)) {
+				if (!rep.data() || !result) {
+					PX4_ERR("EntityFactory service call failed.");
+					return PX4_ERROR;
+				}
+
+			} else {
+				PX4_ERR("Service call timed out. Check GZ_SIM_RESOURCE_PATH is set correctly.");
 				return PX4_ERROR;
 			}
-
-		} else {
-			PX4_ERR("Service call timed out");
-			return PX4_ERROR;
 		}
 	}
 
@@ -181,6 +216,15 @@ int GZBridge::init()
 		return PX4_ERROR;
 	}
 
+	// GPS: /world/$WORLD/model/$MODEL/link/base_link/sensor/navsat_sensor/navsat
+	std::string nav_sat_topic = "/world/" + _world_name + "/model/" + _model_name +
+				    "/link/base_link/sensor/navsat_sensor/navsat";
+
+	if (!_node.Subscribe(nav_sat_topic, &GZBridge::navSatCallback, this)) {
+		PX4_ERR("failed to subscribe to %s", nav_sat_topic.c_str());
+		return PX4_ERROR;
+	}
+
 	if (!_mixing_interface_esc.init(_model_name)) {
 		PX4_ERR("failed to init ESC output");
 		return PX4_ERROR;
@@ -188,6 +232,11 @@ int GZBridge::init()
 
 	if (!_mixing_interface_servo.init(_model_name)) {
 		PX4_ERR("failed to init servo output");
+		return PX4_ERROR;
+	}
+
+	if (!_mixing_interface_wheel.init(_model_name)) {
+		PX4_ERR("failed to init motor output");
 		return PX4_ERROR;
 	}
 
@@ -282,7 +331,7 @@ int GZBridge::task_spawn(int argc, char *argv[])
 
 #if defined(ENABLE_LOCKSTEP_SCHEDULER)
 			// lockstep scheduler wait for initial clock set before returning
-			int sleep_count_limit = 1000;
+			int sleep_count_limit = 10000;
 
 			while ((instance->world_time_us() == 0) && sleep_count_limit > 0) {
 				// wait for first clock message
@@ -388,7 +437,7 @@ void GZBridge::airspeedCallback(const gz::msgs::AirSpeedSensor &air_speed)
 	report.timestamp_sample = time_us;
 	report.device_id = 1377548; // 1377548: DRV_DIFF_PRESS_DEVTYPE_SIM, BUS: 1, ADDR: 5, TYPE: SIMULATION
 	report.differential_pressure_pa = static_cast<float>(air_speed_value); // hPa to Pa;
-	report.temperature = static_cast<float>(air_speed.temperature()) + CONSTANTS_ABSOLUTE_NULL_CELSIUS; // K to C
+	report.temperature = static_cast<float>(air_speed.temperature()) + atmosphere::kAbsoluteNullCelsius; // K to C
 	report.timestamp = hrt_absolute_time();;
 	_differential_pressure_pub.publish(report);
 
@@ -486,17 +535,6 @@ void GZBridge::poseInfoCallback(const gz::msgs::Pose_V &pose)
 			gz::msgs::Vector3d pose_position = pose.pose(p).position();
 			gz::msgs::Quaternion pose_orientation = pose.pose(p).orientation();
 
-			static const auto q_FLU_to_FRD = gz::math::Quaterniond(0, 1, 0, 0);
-
-			/**
-			 * @brief Quaternion for rotation between ENU and NED frames
-			 *
-			 * NED to ENU: +PI/2 rotation about Z (Down) followed by a +PI rotation around X (old North/new East)
-			 * ENU to NED: +PI/2 rotation about Z (Up) followed by a +PI rotation about X (old East/new North)
-			 * This rotation is symmetric, so q_ENU_to_NED == q_NED_to_ENU.
-			 */
-			static const auto q_ENU_to_NED = gz::math::Quaterniond(0, 0.70711, 0.70711, 0);
-
 			// ground truth
 			gz::math::Quaterniond q_gr = gz::math::Quaterniond(
 							     pose_orientation.w(),
@@ -504,8 +542,8 @@ void GZBridge::poseInfoCallback(const gz::msgs::Pose_V &pose)
 							     pose_orientation.y(),
 							     pose_orientation.z());
 
-			gz::math::Quaterniond q_gb = q_gr * q_FLU_to_FRD.Inverse();
-			gz::math::Quaterniond q_nb = q_ENU_to_NED * q_gb;
+			gz::math::Quaterniond q_nb;
+			GZBridge::rotateQuaternion(q_nb, q_gr);
 
 			// publish attitude groundtruth
 			vehicle_attitude_s vehicle_attitude_groundtruth{};
@@ -536,10 +574,6 @@ void GZBridge::poseInfoCallback(const gz::msgs::Pose_V &pose)
 			vehicle_angular_velocity_groundtruth.timestamp = hrt_absolute_time();
 			_angular_velocity_ground_truth_pub.publish(vehicle_angular_velocity_groundtruth);
 
-			if (!_pos_ref.isInitialized()) {
-				_pos_ref.initReference((double)_param_sim_home_lat.get(), (double)_param_sim_home_lon.get(), hrt_absolute_time());
-			}
-
 			vehicle_local_position_s local_position_groundtruth{};
 #if defined(ENABLE_LOCKSTEP_SCHEDULER)
 			local_position_groundtruth.timestamp_sample = time_us;
@@ -566,30 +600,26 @@ void GZBridge::poseInfoCallback(const gz::msgs::Pose_V &pose)
 
 			local_position_groundtruth.heading = euler.psi();
 
-			local_position_groundtruth.ref_lat = _pos_ref.getProjectionReferenceLat(); // Reference point latitude in degrees
-			local_position_groundtruth.ref_lon = _pos_ref.getProjectionReferenceLon(); // Reference point longitude in degrees
-			local_position_groundtruth.ref_alt = _param_sim_home_alt.get();
-			local_position_groundtruth.ref_timestamp = _pos_ref.getProjectionReferenceTimestamp();
+			if (_pos_ref.isInitialized()) {
+
+				local_position_groundtruth.ref_lat = _pos_ref.getProjectionReferenceLat(); // Reference point latitude in degrees
+				local_position_groundtruth.ref_lon = _pos_ref.getProjectionReferenceLon(); // Reference point longitude in degrees
+				local_position_groundtruth.ref_alt = _alt_ref;
+				local_position_groundtruth.ref_timestamp = _pos_ref.getProjectionReferenceTimestamp();
+				local_position_groundtruth.xy_global = true;
+				local_position_groundtruth.z_global = true;
+
+			} else {
+				local_position_groundtruth.ref_lat = static_cast<double>(NAN);
+				local_position_groundtruth.ref_lon = static_cast<double>(NAN);
+				local_position_groundtruth.ref_alt = NAN;
+				local_position_groundtruth.ref_timestamp = 0;
+				local_position_groundtruth.xy_global = false;
+				local_position_groundtruth.z_global = false;
+			}
 
 			local_position_groundtruth.timestamp = hrt_absolute_time();
 			_lpos_ground_truth_pub.publish(local_position_groundtruth);
-
-			if (_pos_ref.isInitialized()) {
-				// publish position groundtruth
-				vehicle_global_position_s global_position_groundtruth{};
-#if defined(ENABLE_LOCKSTEP_SCHEDULER)
-				global_position_groundtruth.timestamp_sample = time_us;
-#else
-				global_position_groundtruth.timestamp_sample = hrt_absolute_time();
-#endif
-
-				_pos_ref.reproject(local_position_groundtruth.x, local_position_groundtruth.y,
-						   global_position_groundtruth.lat, global_position_groundtruth.lon);
-
-				global_position_groundtruth.alt = _param_sim_home_alt.get() - static_cast<float>(position(2));
-				global_position_groundtruth.timestamp = hrt_absolute_time();
-				_gpos_ground_truth_pub.publish(global_position_groundtruth);
-			}
 
 			pthread_mutex_unlock(&_node_mutex);
 			return;
@@ -621,40 +651,114 @@ void GZBridge::odometryCallback(const gz::msgs::OdometryWithCovariance &odometry
 	odom.timestamp_sample = hrt_absolute_time();
 	odom.timestamp = hrt_absolute_time();
 #endif
-	odom.pose_frame = vehicle_odometry_s::POSE_FRAME_NED;
 
+	// gz odometry position is in ENU frame and needs to be converted to NED
+	odom.pose_frame = vehicle_odometry_s::POSE_FRAME_NED;
 	odom.position[0] = odometry.pose_with_covariance().pose().position().y();
 	odom.position[1] = odometry.pose_with_covariance().pose().position().x();
 	odom.position[2] = -odometry.pose_with_covariance().pose().position().z();
 
-	odom.velocity[0] = odometry.twist_with_covariance().twist().linear().y();
-	odom.velocity[1] = odometry.twist_with_covariance().twist().linear().x();
+	// gz odometry orientation is "body FLU->ENU" and needs to be converted in "body FRD->NED"
+	gz::msgs::Quaternion pose_orientation = odometry.pose_with_covariance().pose().orientation();
+	gz::math::Quaterniond q_gr = gz::math::Quaterniond(
+					     pose_orientation.w(),
+					     pose_orientation.x(),
+					     pose_orientation.y(),
+					     pose_orientation.z());
+	gz::math::Quaterniond q_nb;
+	GZBridge::rotateQuaternion(q_nb, q_gr);
+	odom.q[0] = q_nb.W();
+	odom.q[1] = q_nb.X();
+	odom.q[2] = q_nb.Y();
+	odom.q[3] = q_nb.Z();
+
+	// gz odometry linear velocity is in body FLU and needs to be converted in body FRD
+	odom.velocity_frame = vehicle_odometry_s::VELOCITY_FRAME_BODY_FRD;
+	odom.velocity[0] = odometry.twist_with_covariance().twist().linear().x();
+	odom.velocity[1] = -odometry.twist_with_covariance().twist().linear().y();
 	odom.velocity[2] = -odometry.twist_with_covariance().twist().linear().z();
 
-	odom.angular_velocity[0] = odometry.twist_with_covariance().twist().angular().y();
-	odom.angular_velocity[1] = odometry.twist_with_covariance().twist().angular().x();
+	// gz odometry angular velocity is in body FLU and need to be converted in body FRD
+	odom.angular_velocity[0] = odometry.twist_with_covariance().twist().angular().x();
+	odom.angular_velocity[1] = -odometry.twist_with_covariance().twist().angular().y();
 	odom.angular_velocity[2] = -odometry.twist_with_covariance().twist().angular().z();
 
 	// VISION_POSITION_ESTIMATE covariance
-	//  Row-major representation of pose 6x6 cross-covariance matrix upper right triangle
-	//  (states: x, y, z, roll, pitch, yaw; first six entries are the first ROW, next five entries are the second ROW, etc.).
+	//  pose 6x6 cross-covariance matrix
+	//  (states: x, y, z, roll, pitch, yaw).
 	//  If unknown, assign NaN value to first element in the array.
-	odom.position_variance[0] = odometry.pose_with_covariance().covariance().data(0);  // X  row 0, col 0
-	odom.position_variance[1] = odometry.pose_with_covariance().covariance().data(7);  // Y  row 1, col 1
+	odom.position_variance[0] = odometry.pose_with_covariance().covariance().data(7);  // Y  row 1, col 1
+	odom.position_variance[1] = odometry.pose_with_covariance().covariance().data(0);  // X  row 0, col 0
 	odom.position_variance[2] = odometry.pose_with_covariance().covariance().data(14); // Z  row 2, col 2
 
 	odom.orientation_variance[0] = odometry.pose_with_covariance().covariance().data(21); // R  row 3, col 3
 	odom.orientation_variance[1] = odometry.pose_with_covariance().covariance().data(28); // P  row 4, col 4
 	odom.orientation_variance[2] = odometry.pose_with_covariance().covariance().data(35); // Y  row 5, col 5
 
-	odom.velocity_variance[0] = odometry.twist_with_covariance().covariance().data(0); // R  row 3, col 3
-	odom.velocity_variance[1] = odometry.twist_with_covariance().covariance().data(7); // P  row 4, col 4
-	odom.velocity_variance[2] = odometry.twist_with_covariance().covariance().data(14); // Y  row 5, col 5
+	odom.velocity_variance[0] = odometry.twist_with_covariance().covariance().data(7);  // Y  row 1, col 1
+	odom.velocity_variance[1] = odometry.twist_with_covariance().covariance().data(0);  // X  row 0, col 0
+	odom.velocity_variance[2] = odometry.twist_with_covariance().covariance().data(14); // Z  row 2, col 2
 
 	// odom.reset_counter = vpe.reset_counter;
 	_visual_odometry_pub.publish(odom);
 
 	pthread_mutex_unlock(&_node_mutex);
+}
+
+void GZBridge::navSatCallback(const gz::msgs::NavSat &nav_sat)
+{
+	if (hrt_absolute_time() == 0) {
+		return;
+	}
+
+	pthread_mutex_lock(&_node_mutex);
+
+	const uint64_t time_us = (nav_sat.header().stamp().sec() * 1000000) + (nav_sat.header().stamp().nsec() / 1000);
+
+	if (time_us > _world_time_us.load()) {
+		updateClock(nav_sat.header().stamp().sec(), nav_sat.header().stamp().nsec());
+	}
+
+	_timestamp_prev = time_us;
+
+	// initialize gps position
+	if (!_pos_ref.isInitialized()) {
+		_pos_ref.initReference(nav_sat.latitude_deg(), nav_sat.longitude_deg(), hrt_absolute_time());
+		_alt_ref = nav_sat.altitude();
+
+	} else {
+		// publish GPS groundtruth
+		vehicle_global_position_s global_position_groundtruth{};
+#if defined(ENABLE_LOCKSTEP_SCHEDULER)
+		global_position_groundtruth.timestamp_sample = time_us;
+#else
+		global_position_groundtruth.timestamp_sample = hrt_absolute_time();
+#endif
+		global_position_groundtruth.lat = nav_sat.latitude_deg();
+		global_position_groundtruth.lon = nav_sat.longitude_deg();
+		global_position_groundtruth.alt = nav_sat.altitude();
+		_gpos_ground_truth_pub.publish(global_position_groundtruth);
+	}
+
+	pthread_mutex_unlock(&_node_mutex);
+}
+
+void GZBridge::rotateQuaternion(gz::math::Quaterniond &q_FRD_to_NED, const gz::math::Quaterniond q_FLU_to_ENU)
+{
+	// FLU (ROS) to FRD (PX4) static rotation
+	static const auto q_FLU_to_FRD = gz::math::Quaterniond(0, 1, 0, 0);
+
+	/**
+	 * @brief Quaternion for rotation between ENU and NED frames
+	 *
+	 * NED to ENU: +PI/2 rotation about Z (Down) followed by a +PI rotation around X (old North/new East)
+	 * ENU to NED: +PI/2 rotation about Z (Up) followed by a +PI rotation about X (old East/new North)
+	 * This rotation is symmetric, so q_ENU_to_NED == q_NED_to_ENU.
+	 */
+	static const auto q_ENU_to_NED = gz::math::Quaterniond(0, 0.70711, 0.70711, 0);
+
+	// final rotation composition
+	q_FRD_to_NED = q_ENU_to_NED * q_FLU_to_ENU * q_FLU_to_FRD.Inverse();
 }
 
 void GZBridge::Run()
@@ -664,6 +768,7 @@ void GZBridge::Run()
 
 		_mixing_interface_esc.stop();
 		_mixing_interface_servo.stop();
+		_mixing_interface_wheel.stop();
 
 		exit_and_cleanup();
 		return;
@@ -679,6 +784,7 @@ void GZBridge::Run()
 
 		_mixing_interface_esc.updateParams();
 		_mixing_interface_servo.updateParams();
+		_mixing_interface_wheel.updateParams();
 	}
 
 	ScheduleDelayed(10_ms);
@@ -693,6 +799,9 @@ int GZBridge::print_status()
 
 	PX4_INFO_RAW("Servo outputs:\n");
 	_mixing_interface_servo.mixingOutput().printStatus();
+
+	PX4_INFO_RAW("Wheel outputs:\n");
+	_mixing_interface_wheel.mixingOutput().printStatus();
 
 	return 0;
 }
