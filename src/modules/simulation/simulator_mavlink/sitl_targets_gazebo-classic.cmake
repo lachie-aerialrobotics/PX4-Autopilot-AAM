@@ -87,6 +87,9 @@ if(gazebo_FOUND)
 		iris_opt_flow_mockup
 		iris_rplidar
 		iris_vision
+		hex
+		hex_delta
+		hex_stewart
 		omnicopter
 		plane
 		plane_cam
@@ -117,6 +120,8 @@ if(gazebo_FOUND)
 		warehouse
 		windy
 		yosemite
+		ARLarena
+		DroneHub
 	)
 
 	# find corresponding airframes
