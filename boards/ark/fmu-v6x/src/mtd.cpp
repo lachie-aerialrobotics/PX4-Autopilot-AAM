@@ -95,19 +95,11 @@ static const px4_mft_entry_s mft_mft = {
 };
 
 static const px4_mft_s mft = {
-<<<<<<< HEAD
-	.nmft = 1,
-<<<<<<< HEAD
-=======
 	.nmft = 2,
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 	.mfts = {
 		&mtd_mft,
 		&mft_mft,
 	}
-=======
-	.mfts = &mtd_mft
->>>>>>> upstream/stable
 };
 
 const px4_mft_s *board_get_manifest(void)

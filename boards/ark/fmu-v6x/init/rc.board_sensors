@@ -14,6 +14,7 @@ fi
 if param compare -s ADC_ADS1115_EN 1
 then
 	ads1115 start -X
+	board_adc start -n
 else
 	board_adc start
 fi
@@ -22,60 +23,39 @@ if param compare SENS_EN_INA226 1
 then
 	# Start Digital power monitors
 	ina226 -X -b 1 -t 1 -k start
-<<<<<<< HEAD
 
 	if [ $HAVE_PM2 = yes ]
 	then
 		ina226 -X -b 2 -t 2 -k start
 	fi
-<<<<<<< HEAD
-=======
-	ina226 -X -b 2 -t 2 -k start
->>>>>>> upstream/stable
-=======
 
 	if [ $HAVE_PM3 = yes ]
 	then
 		ina226 -X -b 3 -t 3 -k start
 	fi
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 fi
 
 if param compare SENS_EN_INA228 1
 then
 	# Start Digital power monitors
 	ina228 -X -b 1 -t 1 -k start
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 	if [ $HAVE_PM2 = yes ]
 	then
 		ina228 -X -b 2 -t 2 -k start
 	fi
-<<<<<<< HEAD
-=======
-	ina228 -X -b 2 -t 2 -k start
->>>>>>> upstream/stable
-=======
 
 	if [ $HAVE_PM3 = yes ]
 	then
 		ina228 -X -b 3 -t 3 -k start
 	fi
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 fi
 
 if param compare SENS_EN_INA238 1
 then
 	# Start Digital power monitors
 	ina238 -X -b 1 -t 1 -k start
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 	if [ $HAVE_PM2 = yes ]
 	then
 		ina238 -X -b 2 -t 2 -k start
@@ -121,32 +101,4 @@ bmm150 -I start
 bmp388 -I start
 
 unset HAVE_PM2
-<<<<<<< HEAD
-=======
-	ina238 -X -b 2 -t 2 -k start
-fi
-
-# Internal SPI bus IIM42652
-iim42652 -R 3 -s -b 1 start
-
-# Internal SPI bus ICM42688p
-icm42688p -R 9 -s -b 2 start
-
-# Internal SPI bus ICM42688p
-icm42688p -R 6 -s -b 3 start
-
-# Internal magnetometer on I2c
-bmm150 -I start
-
-# External compass on GPS1/I2C1 (the 3rd external bus): standard Holybro Pixhawk 4 or CUAV V5 GPS/compass puck (with lights, safety button, and buzzer)
-ist8310 -X -b 1 -R 10 start
-
-# Possible internal Baro
-bmp388 -I start
-
-# Baro on I2C3
-ms5611 -X start
->>>>>>> upstream/stable
-=======
 unset HAVE_PM3
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889

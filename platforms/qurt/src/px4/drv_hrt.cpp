@@ -43,6 +43,8 @@
 
 #include "hrt_work.h"
 
+#define MODULE_NAME "drv_hrt"
+
 static constexpr unsigned HRT_INTERVAL_MIN = 50;
 static constexpr unsigned HRT_INTERVAL_MAX = 50000000;
 
@@ -81,7 +83,7 @@ static void hrt_unlock()
 	px4_sem_post(&_hrt_lock);
 }
 
-int px4_clock_settime(clockid_t clk_id, struct timespec *tp)
+int px4_clock_settime(clockid_t clk_id, const struct timespec *tp)
 {
 	return 0;
 }

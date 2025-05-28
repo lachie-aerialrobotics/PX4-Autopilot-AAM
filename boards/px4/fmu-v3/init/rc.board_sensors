@@ -24,13 +24,13 @@ if ver hwtypecmp V30
 then
 	# Check for Pixhawk 2.0 cube (isolated IMU on SPI4)
 	#  mpu6000 on v2.0, mpu9250 on v2.1
-	if mpu6000 -s -b 4 -R 10 -q start
+	if mpu6000 -s -b 4 -R 10 start
 	then
 		set BOARD_FMUV3 20
 	else
 		# Check for Pixhawk 2.1 cube
 		# isolated/external mpu9250 (SPI4)
-		if mpu9250 -s -b 4 -R 10 -q start
+		if mpu9250 -s -b 4 -R 10 start
 		then
 			set BOARD_FMUV3 21
 		fi

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2016-2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2016-2024 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,6 +126,9 @@
 
 #define SPI6_nRESET_EXTERNAL1       /* PF10 */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTF|GPIO_PIN10)
 #define SPI6_RESET(on_true)          px4_arch_gpiowrite(SPI6_nRESET_EXTERNAL1, !(on_true))
+
+// ADIS16507 hardware reset
+#define GPIO_ADIS16507_RESET(reset) SPI6_RESET(reset)
 
 /* I2C busses */
 
@@ -420,6 +423,9 @@
 /* This board provides a DMA pool and APIs */
 #define BOARD_DMA_ALLOC_POOL_SIZE 5120
 
+/* This board has 4 DMA channels available for bidirectional dshot */
+#define BOARD_DMA_NUM_DSHOT_CHANNELS 4
+
 /* This board provides the board_on_reset interface */
 
 #define BOARD_HAS_ON_RESET 1
@@ -472,7 +478,7 @@
 		GPIO_FMU_CH7,     	          \
 		GPIO_FMU_CH8,     	          \
 		GPIO_FMU_CAP,     	          \
-		GPIO_SPIX_SYNC                    \e
+		GPIO_SPIX_SYNC                    \
 	}
 
 #define BOARD_ENABLE_CONSOLE_BUFFER

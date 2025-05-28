@@ -153,13 +153,8 @@ constexpr px4_spi_bus_all_hw_t px4_spi_buses_all_hw[BOARD_NUM_SPI_CFG_HW_VERSION
 			initSPIConfigExternal(SPI::CS{GPIO::PortA, GPIO::Pin15}, SPI::DRDY{GPIO::PortD, GPIO::Pin12}),
 		}),
 	}),
-<<<<<<< HEAD
-<<<<<<< HEAD
-	initSPIHWVersion(V6X0910, {
-=======
 
 	initSPIFmumID(V6X_8, {
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 		initSPIBus(SPI::Bus::SPI1, {
 			initSPIDevice(DRV_IMU_DEVTYPE_ICM45686, SPI::CS{GPIO::PortI, GPIO::Pin9}, SPI::DRDY{GPIO::PortF, GPIO::Pin2}),
 		}, {GPIO::PortI, GPIO::Pin11}),
@@ -206,12 +201,7 @@ constexpr px4_spi_bus_all_hw_t px4_spi_buses_all_hw[BOARD_NUM_SPI_CFG_HW_VERSION
 			initSPIConfigExternal(SPI::CS{GPIO::PortA, GPIO::Pin15}, SPI::DRDY{GPIO::PortD, GPIO::Pin12}),
 		}),
 	}),
-<<<<<<< HEAD
-=======
->>>>>>> upstream/stable
-=======
 
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 };
 
 static constexpr bool unused = validateSPIConfig(px4_spi_buses_all_hw);

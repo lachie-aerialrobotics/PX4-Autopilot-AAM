@@ -1,14 +1,6 @@
 /****************************************************************************
  *
-<<<<<<< HEAD
-<<<<<<< HEAD
- *   Copyright (C) 2022 PX4 Development Team. All rights reserved.
-=======
- *   Copyright (C) 2020, 2022 PX4 Development Team. All rights reserved.
->>>>>>> upstream/stable
-=======
  *   Copyright (C) 2024 PX4 Development Team. All rights reserved.
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,15 +36,7 @@
 #include <nuttx/spi/spi.h>
 
 constexpr px4_spi_bus_all_hw_t px4_spi_buses_all_hw[BOARD_NUM_SPI_CFG_HW_VERSIONS] = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-	initSPIHWVersion(ARKV6X00, {
-=======
-	initSPIHWVersion(HW_VER_REV(0, 0), {
->>>>>>> upstream/stable
-=======
 	initSPIFmumID(ARKV6X_0, {
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 		initSPIBus(SPI::Bus::SPI1, {
 			initSPIDevice(DRV_IMU_DEVTYPE_IIM42652, SPI::CS{GPIO::PortI, GPIO::Pin9}, SPI::DRDY{GPIO::PortF, GPIO::Pin2}),
 		}, {GPIO::PortI, GPIO::Pin11}),
@@ -75,15 +59,7 @@ constexpr px4_spi_bus_all_hw_t px4_spi_buses_all_hw[BOARD_NUM_SPI_CFG_HW_VERSION
 		}),
 	}),
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	initSPIHWVersion(ARKV6X01, { // Placeholder
-=======
-	initSPIHWVersion(HW_VER_REV(0, 3), {
->>>>>>> upstream/stable
-=======
 	initSPIFmumID(ARKV6X_1, {
->>>>>>> 32aa3263a60d48a960eb8a2ccc50073815250889
 		initSPIBus(SPI::Bus::SPI1, {
 			initSPIDevice(DRV_IMU_DEVTYPE_IIM42653, SPI::CS{GPIO::PortI, GPIO::Pin9}, SPI::DRDY{GPIO::PortF, GPIO::Pin2}),
 		}, {GPIO::PortI, GPIO::Pin11}),

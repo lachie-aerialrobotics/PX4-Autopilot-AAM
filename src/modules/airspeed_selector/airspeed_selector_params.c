@@ -136,6 +136,7 @@ PARAM_DEFINE_FLOAT(ASPD_SCALE_3, 1.0f);
  * @value 1 First airspeed sensor
  * @value 2 Second airspeed sensor
  * @value 3 Third airspeed sensor
+ * @value 4 Thrust based airspeed
  *
  * @reboot_required true
  * @group Airspeed Validator
@@ -149,27 +150,25 @@ PARAM_DEFINE_INT32(ASPD_PRIMARY, 1);
  * Controls which checks are run to check airspeed data for validity. Only applied if ASPD_PRIMARY > 0.
  *
  * @min 0
- * @max 15
+ * @max 31
  * @bit 0 Only data missing check (triggers if more than 1s no data)
  * @bit 1 Data stuck (triggers if data is exactly constant for 2s in FW mode)
  * @bit 2 Innovation check (see ASPD_FS_INNOV)
  * @bit 3 Load factor check (triggers if measurement is below stall speed)
+ * @bit 4 First principle check (airspeed change vs. throttle and pitch)
  * @group Airspeed Validator
  */
 PARAM_DEFINE_INT32(ASPD_DO_CHECKS, 7);
 
 /**
- * Enable fallback to sensor-less airspeed estimation
+ * Fallback options
  *
- * If set to true and airspeed checks are enabled, it will use a sensor-less airspeed estimation based on groundspeed
- * minus windspeed if no other airspeed sensor available to fall back to.
- *
- * @value 0 Disable fallback to sensor-less estimation
- * @value 1 Enable fallback to sensor-less estimation
- * @boolean
+ * @value 0 Fallback only to other airspeed sensors
+ * @value 1 Fallback to groundspeed-minus-windspeed airspeed estimation
+ * @value 2 Fallback to thrust based airspeed estimation
  * @group Airspeed Validator
  */
-PARAM_DEFINE_INT32(ASPD_FALLBACK_GW, 0);
+PARAM_DEFINE_INT32(ASPD_FALLBACK, 0);
 
 /**
  * Airspeed failure innovation threshold
@@ -208,10 +207,10 @@ PARAM_DEFINE_FLOAT(ASPD_FS_INTEG, 10.f);
  *
  * @unit s
  * @group Airspeed Validator
- * @min 1
- * @max 10
+ * @min 0.0
+ * @decimal 1
  */
-PARAM_DEFINE_INT32(ASPD_FS_T_STOP, 2);
+PARAM_DEFINE_FLOAT(ASPD_FS_T_STOP, 1.f);
 
 /**
  * Airspeed failsafe start delay
@@ -221,10 +220,10 @@ PARAM_DEFINE_INT32(ASPD_FS_T_STOP, 2);
  *
  * @unit s
  * @group Airspeed Validator
- * @min -1
- * @max 1000
+ * @min -1.0
+ * @decimal 1
  */
-PARAM_DEFINE_INT32(ASPD_FS_T_START, -1);
+PARAM_DEFINE_FLOAT(ASPD_FS_T_START, -1.f);
 
 /**
  * Horizontal wind uncertainty threshold for synthetic airspeed.
@@ -239,3 +238,19 @@ PARAM_DEFINE_INT32(ASPD_FS_T_START, -1);
  * @group Airspeed Validator
  */
 PARAM_DEFINE_FLOAT(ASPD_WERR_THR, 0.55f);
+
+/**
+ * First principle airspeed check time window
+ *
+ * Window for comparing airspeed change to throttle and pitch change.
+ * Triggers when the airspeed change within this window is negative while throttle increases
+ * and the vehicle pitches down.
+ * Is meant to catch degrading airspeed blockages as can happen when flying through icing conditions.
+ * Relies on  FW_THR_TRIM being set accurately.
+ *
+ * @unit s
+ * @min 0
+ * @decimal 1
+ * @group Airspeed Validator
+ */
+PARAM_DEFINE_FLOAT(ASPD_FP_T_WINDOW, 2.0f);

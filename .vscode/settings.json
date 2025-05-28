@@ -15,6 +15,7 @@
         "cmake.buildDirectory": "${workspaceFolder}/build/${variant:CONFIG}",
         "cmake.configureOnOpen": true,
         "cmake.ctest.parallelJobs": 1,
+        "cmake.options.statusBarVisibility": "compact",
         "cmake.skipConfigureIfCachePresent": true,
         "cmakeExplorer.buildDir": "${workspaceFolder}/build/px4_sitl_test",
         "cmakeExplorer.parallelJobs": 1,
@@ -128,12 +129,4 @@
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
         },
-        "python.autoComplete.extraPaths": [
-                "/home/aam01/aam_ws/devel/lib/python3/dist-packages",
-                "/opt/ros/noetic/lib/python3/dist-packages"
-        ],
-        "python.analysis.extraPaths": [
-                "/home/aam01/aam_ws/devel/lib/python3/dist-packages",
-                "/opt/ros/noetic/lib/python3/dist-packages"
-        ]
 }
