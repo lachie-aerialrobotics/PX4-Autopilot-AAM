@@ -129,4 +129,29 @@
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
         },
+        "python.autoComplete.extraPaths": [
+                "/home/lachie/aam_ws/install/vertical_aam/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/stewart_msgs/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/stewart/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/px4_ros_com/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/px4_mpc/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/px4_offboard/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/px4_msgs/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/mpc_msgs/local/lib/python3.10/dist-packages",
+                "/opt/ros/humble/lib/python3.10/site-packages",
+                "/opt/ros/humble/local/lib/python3.10/dist-packages"
+        ],
+        "python.analysis.extraPaths": [
+                "/home/lachie/aam_ws/install/vertical_aam/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/stewart_msgs/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/stewart/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/px4_ros_com/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/px4_mpc/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/px4_offboard/lib/python3.10/site-packages",
+                "/home/lachie/aam_ws/install/px4_msgs/local/lib/python3.10/dist-packages",
+                "/home/lachie/aam_ws/install/mpc_msgs/local/lib/python3.10/dist-packages",
+                "/opt/ros/humble/lib/python3.10/site-packages",
+                "/opt/ros/humble/local/lib/python3.10/dist-packages"
+        ],
+        "ros.distro": "humble",
 }

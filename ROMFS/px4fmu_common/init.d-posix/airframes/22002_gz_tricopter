@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# @name Gazebo tricopter
+#
+# @type Coaxial Trirotor
+#
+
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=tricopter}
+
+. ${R}etc/init.d-posix/airframes/22001_gz_tricopter_base

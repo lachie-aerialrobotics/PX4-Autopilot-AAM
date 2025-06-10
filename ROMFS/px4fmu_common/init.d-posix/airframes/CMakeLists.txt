@@ -92,6 +92,7 @@ px4_add_romfs_files(
 	4019_gz_x500_gimbal
 	4020_gz_tiltrotor
 	4021_gz_x500_flow
+	4022_gz_x500_stewart
 
 	6011_gazebo-classic_typhoon_h480
 	6011_gazebo-classic_typhoon_h480.post
@@ -118,4 +119,7 @@ px4_add_romfs_files(
 	71002_gz_spacecraft_2d
 
 	# [22000, 22999] Reserve for custom models
+	22001_gz_tricopter_base
+	22002_gz_tricopter
+	22003_gz_tricopter_lidar
 )
