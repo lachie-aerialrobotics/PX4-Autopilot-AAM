@@ -11,7 +11,8 @@ PX4_SIM_MODEL=${PX4_SIM_MODEL:=tricopter_base}
 
 PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
 PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
-PX4_SIM_MODEL=${PX4_SIM_MODEL:=tricopter}
+# The tricopter models include model://stewart_platform from the `stewart` ROS2 package:
+# export GZ_SIM_RESOURCE_PATH=<stewart repo>/stewart/models:$GZ_SIM_RESOURCE_PATH
 
 param set-default SIM_GZ_EN 1
 param set-default SIM_GZ_EC_FUNC1 101
